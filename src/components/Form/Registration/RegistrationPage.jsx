@@ -21,7 +21,7 @@ function Registration() {
         confirmPassword: ''
     });
 
-    const [userRegister] = useRegisterUserMutation();
+    const [userRegister] = useRegisterUserMutation()
 
     const handleFieldChange = (fieldName, value) => {
         setFields(prevFields => ({
