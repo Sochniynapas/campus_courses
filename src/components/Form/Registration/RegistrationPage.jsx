@@ -51,6 +51,9 @@ function Registration() {
     return (
         <Container className="pt-5">
             <Nav className="pb-2">
+                <h1 className="fw-bold display-5 ">Регистрация нового пользователя</h1>
+            </Nav>
+            <Nav className="pb-2">
                 <FormLabel>Фио</FormLabel>
                 <FormControl
                     type="text"

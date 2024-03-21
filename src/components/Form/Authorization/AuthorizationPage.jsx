@@ -47,6 +47,9 @@ function Authorization() {
     return (
         <Container className="pt-5">
             <Nav className="pb-2">
+                <h1 className="fw-bold display-5 ">Авторизация</h1>
+            </Nav>
+            <Nav className="pb-2">
                 <FormLabel>Email</FormLabel>
                 <FormControl
                     type="text"

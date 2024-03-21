@@ -44,7 +44,7 @@ function MainPage(prop) {
               {token ? (
                 <>
                   <Header />
-                  <Nav className='ms-auto'><Link className='nav-link text-white ' to='/ab'>{login}</Link></Nav>
+                  <Nav className='ms-auto'><Link className='nav-link text-white ' to='/profile'>{login}</Link></Nav>
                   <Nav><Link className='nav-link text-white ' to='/' onClick={handleLogout}>Выход</Link></Nav>
                 </>
               ) : (
