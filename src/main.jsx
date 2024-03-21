@@ -7,17 +7,22 @@ import Hello from './components/Form/UnAuth/HelloPage.jsx'
 import Registration from './components/Form/Registration/RegistrationPage.jsx'
 import { Provider } from 'react-redux'
 import { store } from './store/store.js'
+import Authorization from './components/Form/Authorization/AuthorizationPage.jsx'
 
-const TOKEN = true
+
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainPage children={Hello} token={TOKEN} />
+    element: <MainPage children={Hello} />
   },
   {
     path: "/registration",
-    element: <MainPage children={Registration} token={TOKEN} />
+    element: <MainPage children={Registration} />
+  },
+  {
+    path: "/login",
+    element: <MainPage children={Authorization} />
   },
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(

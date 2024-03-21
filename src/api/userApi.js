@@ -1,4 +1,4 @@
-import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 const BASE_URL = 'https://camp-courses.api.kreosoft.space/'
 
 
@@ -6,13 +6,29 @@ const BASE_URL = 'https://camp-courses.api.kreosoft.space/'
 export const userApi = createApi({
 
     reducerPath: 'userApi',
-    baseQuery: fetchBaseQuery({baseUrl: BASE_URL}),
-    endpoints:(build) =>({
+    baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+    endpoints: (build) => ({
         registerUser: build.mutation({
             query: (body) => ({
                 url: 'registration',
                 method: 'POST',
                 body,
+            })
+        }),
+        authorizeUser: build.mutation({
+            query: (body) => ({
+                url: 'login',
+                method: 'POST',
+                body,
+            })
+        }),
+        logoutUser: build.mutation({
+            query: (token) => ({
+                url: 'logout',
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
             })
         }),
         getUserCourses: build.query({
@@ -29,10 +45,16 @@ export const userApi = createApi({
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-            })      
+            })
         })
 
     })
-})  
+})
 
-export const {useRegisterUserMutation, useGetUserCoursesQuery, useGetUserTeachingCoursesQuery} = userApi;
+export const {
+    useRegisterUserMutation,
+    useGetUserCoursesQuery,
+    useGetUserTeachingCoursesQuery,
+    useAuthorizeUserMutation,
+    useLogoutUserMutation
+} = userApi;
