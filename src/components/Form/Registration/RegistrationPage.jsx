@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { Button, Container, FormControl, FormLabel, Nav } from "react-bootstrap"
 import { useRegisterUserMutation } from "../../../api/userApi"
-import { useDispatch, useSelector } from "react-redux";
-import { selectToken, setToken } from "../../../store/slice/authSlice";
+import { useDispatch } from "react-redux";
+import { setLogin, setToken } from "../../../store/slice/authSlice";
 import {ProfileValidation} from '../../../validation/userValidation' 
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +21,7 @@ function Registration() {
         confirmPassword: ''
     });
 
-    const [userRegister, { isLoading }] = useRegisterUserMutation();
+    const [userRegister] = useRegisterUserMutation();
 
     const handleFieldChange = (fieldName, value) => {
         setFields(prevFields => ({
@@ -34,6 +34,7 @@ function Registration() {
             const response = await userRegister(fields)
             if(response.data){
                 dispatch(setToken(response.data.token))
+                dispatch(setLogin(fields.email))
                 navigate('/')
             }
             else{

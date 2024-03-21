@@ -1,13 +1,15 @@
 import { Container, Nav, Navbar, NavbarBrand, NavbarText } from 'react-bootstrap'
 import Header from './components/Form/Header/HeaderForm.jsx'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux';
-import { selectToken } from './store/slice/authSlice.js';
-import Hello from './components/Form/UnAuth/HelloPage.jsx';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearToken, selectLogin, selectToken } from './store/slice/authSlice.js';
+
 
 function MainPage(prop) {
 
   const token = useSelector(selectToken)
+  const login = useSelector(selectLogin) 
+  const dispatch = useDispatch() 
 
   return (
     <div>
@@ -20,14 +22,14 @@ function MainPage(prop) {
             <Navbar.Collapse>
               {token ? (
                 <>
-                  <Header num={4} />
-                  <Nav className='ms-auto'><Link className='nav-link text-white ' to='/ab'>handie228228@mail.ru</Link></Nav>
-                  <Nav><Link className='nav-link text-white ' to='/ab'>Выход</Link></Nav>
+                  <Header />
+                  <Nav className='ms-auto'><Link className='nav-link text-white ' to='/ab'>{login}</Link></Nav>
+                  <Nav><Link className='nav-link text-white ' to='/' onClick={dispatch(clearToken)}>Выход</Link></Nav>
                 </>
               ) : (
                 <>
                   <Nav className='ms-auto'><Link className='nav-link text-white ' to='registration'>Регистрация</Link></Nav>
-                  <Nav><Link className='nav-link text-white ' to='/ab'>Вход</Link></Nav>
+                  <Nav><Link className='nav-link text-white ' to='/login'>Вход</Link></Nav>
                 </>
               )}
 
