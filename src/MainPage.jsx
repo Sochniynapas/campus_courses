@@ -2,8 +2,9 @@ import { Container, Nav, Navbar, NavbarBrand, NavbarText } from 'react-bootstrap
 import Header from './components/Form/Header/HeaderForm.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
-import { clearToken, selectLogin, selectToken } from './store/slice/authSlice.js';
-import { useLogoutUserMutation } from './api/userApi.js';
+import { clearToken, selectLogin, selectRoles, selectToken, setRoles } from './store/slice/authSlice.js';
+import { useGetUserRolesQuery, useLogoutUserMutation } from './api/userApi.js';
+import { useEffect } from 'react';
 
 
 function MainPage(prop) {
@@ -11,9 +12,10 @@ function MainPage(prop) {
   const token = useSelector(selectToken)
   const login = useSelector(selectLogin)
   const navigate = useNavigate()
-  const dispatch = useDispatch() 
+  const dispatch = useDispatch()
 
   const [userLogout] = useLogoutUserMutation()
+  const { data: userRoles } = useGetUserRolesQuery(token)
 
   const handleLogout = async () => {
     try {
@@ -31,6 +33,11 @@ function MainPage(prop) {
     }
   }
 
+  useEffect(() => {
+    if (token && userRoles) {
+      dispatch(setRoles(userRoles))
+    }
+  }, [token, userRoles]);
 
   return (
     <div>
@@ -44,7 +51,7 @@ function MainPage(prop) {
               {token ? (
                 <>
                   <Header />
-                  <Nav className='ms-auto'><Link className='nav-link text-white ' to='/ab'>{login}</Link></Nav>
+                  <Nav className='ms-auto'><Link className='nav-link text-white ' to='/profile'>{login}</Link></Nav>
                   <Nav><Link className='nav-link text-white ' to='/' onClick={handleLogout}>Выход</Link></Nav>
                 </>
               ) : (

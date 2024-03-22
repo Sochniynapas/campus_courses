@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button, Container, FormControl, FormLabel, Nav } from "react-bootstrap";
-import { useAuthorizeUserMutation } from "../../../api/userApi";
+import { useAuthorizeUserMutation, useGetUserRolesQuery } from "../../../api/userApi";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import { setLogin, setToken } from "../../../store/slice/authSlice";
+import { setLogin, setRoles, setToken } from "../../../store/slice/authSlice";
 
 
 function Authorization() {
@@ -46,6 +46,9 @@ function Authorization() {
 
     return (
         <Container className="pt-5">
+            <Nav className="pb-2">
+                <h1 className="fw-bold display-5 ">Авторизация</h1>
+            </Nav>
             <Nav className="pb-2">
                 <FormLabel>Email</FormLabel>
                 <FormControl
