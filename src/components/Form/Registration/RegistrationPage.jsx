@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Button, Container, FormControl, FormLabel, Nav } from "react-bootstrap"
 import { useRegisterUserMutation } from "../../../api/userApi"
 import { useDispatch } from "react-redux";
-import { setLogin, setToken } from "../../../store/slice/authSlice";
+import { setLogin, setRoles, setToken } from "../../../store/slice/authSlice";
 import { ProfileValidation } from "../../../validation/userValidation"; 
 import { useNavigate } from "react-router-dom";
 

@@ -31,6 +31,24 @@ export const userApi = createApi({
                 }
             })
         }),
+        editUserProfile: build.mutation({
+            query: ({body, token}) =>({
+                url: 'profile',
+                method: 'PUT',
+                body: body,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+        }),
+        getUserProfile: build.query({
+            query: (token)=>({
+                url: 'profile',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+        }),
         getUserCourses: build.query({
             query: (token) => ({
                 url: 'courses/my',
@@ -46,6 +64,14 @@ export const userApi = createApi({
                     Authorization: `Bearer ${token}`,
                 },
             })
+        }),
+        getUserRoles: build.query({
+            query: (token) => ({
+                url: 'roles',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
         })
 
     })
@@ -56,5 +82,8 @@ export const {
     useGetUserCoursesQuery,
     useGetUserTeachingCoursesQuery,
     useAuthorizeUserMutation,
-    useLogoutUserMutation
+    useLogoutUserMutation,
+    useGetUserProfileQuery,
+    useEditUserProfileMutation,
+    useGetUserRolesQuery
 } = userApi;

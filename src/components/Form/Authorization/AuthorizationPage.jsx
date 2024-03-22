@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button, Container, FormControl, FormLabel, Nav } from "react-bootstrap";
-import { useAuthorizeUserMutation } from "../../../api/userApi";
+import { useAuthorizeUserMutation, useGetUserRolesQuery } from "../../../api/userApi";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import { setLogin, setToken } from "../../../store/slice/authSlice";
+import { setLogin, setRoles, setToken } from "../../../store/slice/authSlice";
 
 
 function Authorization() {
