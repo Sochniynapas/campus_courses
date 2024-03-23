@@ -13,8 +13,18 @@ export const groupApi = createApi({
                     Authorization: `Bearer ${token}`,
                 },
             })
+        }),
+        putGroupName: build.query({
+            query: ({body,token,id}) =>({
+                url: `groups/${id}`,
+                method: 'PUT',
+                body: body,
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            })
         })
     })
 })
 
-export const {useGetGroupsQuery} = groupApi
+export const {useGetGroupsQuery, usePutGroupNameQuery} = groupApi
