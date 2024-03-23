@@ -1,81 +1,45 @@
-import { Button, Card, Container, Nav, Navbar } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Button, Card, Container, Nav, } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { useGetGroupsQuery } from "../../../api/groupApi";
+import { useDispatch, useSelector } from "react-redux";
+import { clearToken, selectRoles, selectToken } from "../../../store/slice/authSlice";
+import { useEffect } from "react";
+import CardType from "./CardTypes";
 
 
 function CourseGroups() {
+    const token = useSelector(selectToken)
+    const roles = useSelector(selectRoles)
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const { data: groups, isError } = useGetGroupsQuery(token)
+
+    useEffect(() => {
+        if (groups) {
+            console.log(groups)
+        }
+        else{
+            if(isError){
+                dispatch(clearToken)
+                navigate('/')
+            }
+        }
+    }, [groups, isError])
+
     return (
         <Container>
             <Nav className="pb-2">
                 <h1 className="fw-bold display-5 ">Группы кампусных курсов</h1>
             </Nav>
-            <Button>
-                Создать
-            </Button>
-            <Card className="p-2">
-                <Nav className="d-flex justify-content-between  ">
-                    <Link className="col-2 d-flex align-items-center justify-content-start">ГГГГГГГГГ</Link>
-                    <Nav className="col-6 d-flex justify-content-end  ">
-                        <Button className="me-3 border-0 bg-warning text-black ">
-                            Редактировать
-                        </Button>
-                        <Button className="bg-danger border-0">
-                            Удалить
-                        </Button>
-                    </Nav>
-                </Nav>
-            </Card>
-            <Card className="p-2">
-                <Nav className="d-flex justify-content-between  ">
-                    <Link className="col-2 d-flex align-items-center justify-content-start">ГГГГГГГГГ</Link>
-                    <Nav className="col-6 d-flex justify-content-end  ">
-                        <Button className="me-3 border-0 bg-warning text-black ">
-                            Редактировать
-                        </Button>
-                        <Button className="bg-danger border-0">
-                            Удалить
-                        </Button>
-                    </Nav>
-                </Nav>
-            </Card>
-            <Card className="p-2">
-                <Nav className="d-flex justify-content-between  ">
-                    <Link className="col-2 d-flex align-items-center justify-content-start">ГГГГГГГГГ</Link>
-                    <Nav className="col-6 d-flex justify-content-end  ">
-                        <Button className="me-3 border-0 bg-warning text-black ">
-                            Редактировать
-                        </Button>
-                        <Button className="bg-danger border-0">
-                            Удалить
-                        </Button>
-                    </Nav>
-                </Nav>
-            </Card>
-            <Card className="p-2">
-                <Nav className="d-flex justify-content-between  ">
-                    <Link className="col-2 d-flex align-items-center justify-content-start">ГГГГГГГГГ</Link>
-                    <Nav className="col-6 d-flex justify-content-end  ">
-                        <Button className="me-3 border-0 bg-warning text-black ">
-                            Редактировать
-                        </Button>
-                        <Button className="bg-danger border-0">
-                            Удалить
-                        </Button>
-                    </Nav>
-                </Nav>
-            </Card>
-            <Card className="p-2">
-                <Nav className="d-flex justify-content-between  ">
-                    <Link className="col-2 d-flex align-items-center justify-content-start">ГГГГГГГГГ</Link>
-                    <Nav className="col-6 d-flex justify-content-end  ">
-                        <Button className="me-3 border-0 bg-warning text-black ">
-                            Редактировать
-                        </Button>
-                        <Button className="bg-danger border-0">
-                            Удалить
-                        </Button>
-                    </Nav>
-                </Nav>
-            </Card>
+            {roles.isAdmin && (
+                <Button className="mb-3">
+                    Создать
+                </Button>
+            )}
+            {groups && groups.map(group => (
+                <CardType groupName={group.name} id={group.id} isAdmin={roles.isAdmin} />
+            ))}
 
         </Container>
     )
