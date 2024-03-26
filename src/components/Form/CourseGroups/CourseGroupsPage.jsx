@@ -1,4 +1,4 @@
-import { Button, Card, Container, Nav, } from "react-bootstrap";
+import { Button, Card, Container, Form, FormGroup, FormLabel, Nav, } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useGetGroupsQuery } from "../../../api/groupApi";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,8 +19,8 @@ function CourseGroups() {
         if (groups) {
             console.log(groups)
         }
-        else{
-            if(isError){
+        else {
+            if (isError) {
                 dispatch(clearToken)
                 navigate('/')
             }
@@ -29,19 +29,21 @@ function CourseGroups() {
 
     return (
         <Container>
-            <Nav className="pb-2">
-                <h1 className="fw-bold display-5 ">Группы кампусных курсов</h1>
-            </Nav>
-            {roles.isAdmin && (
-                <Button className="mb-3">
-                    Создать
-                </Button>
-            )}
-            {groups && groups.map(group => (
-                <CardType groupName={group.name} id={group.id} isAdmin={roles.isAdmin} />
-            ))}
-
+            <FormGroup>
+                <FormLabel className="pb-2">
+                    <h1 className="fw-bold display-5 ">Группы кампусных курсов</h1>
+                </FormLabel>
+                {roles.isAdmin && (
+                    <Button className="mb-3">
+                        Создать
+                    </Button>
+                )}
+                {groups && groups.map(group => (
+                    <CardType key={group.id} groupName={group.name} id={group.id} isAdmin={roles.isAdmin} />
+                ))}
+            </FormGroup>
         </Container>
+
     )
 
 }
