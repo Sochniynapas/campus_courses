@@ -55,7 +55,6 @@ function CardType(prop) {
         }
     }
     const [deleteGroup] = useDeleteGroupMutation()
-
     const handleDeleteGroup = async () => {
         const response = await deleteGroup({ token: token, id: prop.id })
         if (!response.data) {
@@ -72,7 +71,7 @@ function CardType(prop) {
             <Form className="d-flex justify-content-between flex-lg-row flex-column">
                 {prop.isAdmin ? (
                     <>
-                        <Link className="col-4 d-flex align-items-center justify-content-start">{prop.groupName}</Link>
+                        <Link className="col-4 d-flex align-items-center justify-content-start" to={`/groups/${prop.id}`}>{prop.groupName}</Link>
                         <FormGroup className="col-8 d-flex justify-content-lg-end flex-lg-row flex-column align-content-center ">
                             <Button className="me-3 border-0 bg-warning text-black" onClick={handleShow}>
                                 Редактировать
@@ -107,7 +106,7 @@ function CardType(prop) {
                         </FormGroup>
                     </>
                 ) : (
-                    <Link className="nav-link text-black p-1 d-flex align-items-center justify-content-start">{prop.groupName}</Link>
+                    <Link className="nav-link text-black p-1 d-flex align-items-center justify-content-start" to={`/groups/${prop.id}`}>{prop.groupName}</Link>
                 )}
             </Form>
         </Card>
