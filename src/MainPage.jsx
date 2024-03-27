@@ -14,17 +14,27 @@ function MainPage(prop) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const [userLogout] = useLogoutUserMutation()
+  const [userLogout, requestData] = useLogoutUserMutation()
   const { data: userRoles } = useGetUserRolesQuery(token)
 
   const handleLogout = async () => {
     try {
       const response = await userLogout(token)
-      if (response.data.message === "Logged Out") {
+      if (response && requestData.isError === false) {
         dispatch(clearToken())
         navigate('/')
+        swal({
+          title: "Успешно!",
+          text: "Вы вышли из аккаунта!",
+          icon: "success",
+          button: "Продолжить",
+        });
       }
       else {
+        if(response.error.status === 401){
+          dispatch(clearToken())
+          navigate('/')
+        }
         throw new Error(response.error.status)
       }
     }

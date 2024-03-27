@@ -11,7 +11,6 @@ import { ProfileValidation } from "../../../validation/userValidation"
 
 function Profile() {
     const token = useSelector(selectToken)
-    const roles = useSelector(selectRoles)
     const dispatch = useDispatch()
     const { data: userProfile, error: userError, isLoading } = useGetUserProfileQuery(token)
     const [editUserProfile] = useEditUserProfileMutation()
@@ -26,7 +25,7 @@ function Profile() {
         const body = { fullName: profileFields.name, birthDate: profileFields.bDate }
         const response = await editUserProfile({ body: body, token: token })
         if (response.error && response.error.status === 401) {
-            dispatch(clearToken)
+            dispatch(clearToken())
             navigate('/')
         }
     }
@@ -39,7 +38,6 @@ function Profile() {
     useEffect(() => {
 
         if (userProfile) {
-
             setProfileFields(prevFields => (
                 {
                     ...prevFields,
@@ -49,11 +47,31 @@ function Profile() {
                 }
             )
             )
+            swal({
+                title: "Успешно!",
+                text: "Вы изменили профиль!",
+                icon: "success",
+                button: "Продолжить",
+              });
         }
         else {
             if (userError && userError.status === 401) {
-                dispatch(clearToken)
+                swal({
+                    title: "Ошибка",
+                    text: "Вам следует авторизоваться",
+                    icon: "error",
+                    button: "Продолжить",
+                  });
+                dispatch(clearToken())
                 navigate('/')
+            }
+            else{
+                swal({
+                    title: "Ошибка",
+                    text: "Проверьте введенные данные",
+                    icon: "error",
+                    button: "Продолжить",
+                  });
             }
         }
 

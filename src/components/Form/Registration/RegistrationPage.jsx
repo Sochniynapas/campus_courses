@@ -36,8 +36,20 @@ function Registration() {
                 dispatch(setToken(response.data.token))
                 dispatch(setLogin(fields.email))
                 navigate('/')
+                swal({
+                    title: "Успешно!",
+                    text: "Вы зарегистрировались!",
+                    icon: "success",
+                    button: "Продолжить",
+                });
             }
             else {
+                swal({
+                    title: "Ошибка",
+                    text: "Проверьте введённые данные",
+                    icon: "error",
+                    button: "Продолжить",
+                });
                 setBusy(true)
                 throw new Error(response.error.status)
             }

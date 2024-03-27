@@ -5,7 +5,7 @@ const BASE_URL = 'https://camp-courses.api.kreosoft.space/'
 export const groupApi = createApi({
     reducerPath: 'groupApi',
     baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
-    tagTypes: 'Groups',
+    tagTypes: ['Groups'],
     endpoints: (build) => ({
         getGroups: build.query({
             query: (token) => ({
@@ -15,11 +15,11 @@ export const groupApi = createApi({
                 },
             }),
             providesTags: (result) => result
-                ?[
-                    ...result.map(({id})=>({type: 'Groups'}, id)),
-                    {type: 'Groups', id: 'LIST'}
-                ]:[
-                    [{type: 'Groups', id: 'LIST'}]
+                ? [
+                    ...result.map(({ id }) => ({ type: 'Groups' }, id)),
+                    { type: 'Groups', id: 'LIST' }
+                ] : [
+                    [{ type: 'Groups', id: 'LIST' }]
                 ]
         }),
         putGroupName: build.mutation({
@@ -31,11 +31,34 @@ export const groupApi = createApi({
                     Authorization: `Bearer ${token}`
                 }
             }),
-            invalidatesTags: [{type: 'Groups', id: 'LIST'}]
+            invalidatesTags: [{ type: 'Groups', id: 'LIST' }]
+        }),
+        deleteGroup: build.mutation({
+            query: ({ token, id }) => ({
+                url: `groups/${id}`,
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }),
+            invalidatesTags: [{ type: 'Groups', id: 'LIST' }]
+        }),
+        createGroup: build.mutation({
+            query: ({ token, name }) => ({
+                url: `groups`,
+                method: 'POST',
+                body: { name },
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }),
+            invalidatesTags: [{ type: 'Groups', id: 'LIST' }]
         })
     })
 })
 
 export const {
     useGetGroupsQuery,
-    usePutGroupNameMutation } = groupApi
+    usePutGroupNameMutation,
+    useDeleteGroupMutation,
+    useCreateGroupMutation } = groupApi

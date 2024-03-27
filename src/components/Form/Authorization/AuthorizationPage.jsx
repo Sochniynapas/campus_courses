@@ -4,6 +4,7 @@ import { useAuthorizeUserMutation, useGetUserRolesQuery } from "../../../api/use
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { setLogin, setRoles, setToken } from "../../../store/slice/authSlice";
+import swal from "sweetalert";
 
 
 function Authorization() {
@@ -33,8 +34,20 @@ function Authorization() {
                 dispatch(setToken(response.data.token))
                 dispatch(setLogin(authFields.email))
                 navigate('/')
+                swal({
+                    title: "Успешно!",
+                    text: "Вы авторизовались!",
+                    icon: "success",
+                    button: "Продолжить",
+                  });
             }
             else {
+                swal({
+                    title: "Ошибка",
+                    text: "Вы ввели неверный логин или пароль",
+                    icon: "error",
+                    button: "Продолжить",
+                  });
                 setFail(true)
                 throw new Error(response.error.status)
             }
