@@ -85,6 +85,6 @@ export const {
     useLogoutUserMutation,
     useGetUserProfileQuery,
     useEditUserProfileMutation,
-    useGetUserRolesQuery,
+    useGetUserRolesQuery
 
 } = userApi

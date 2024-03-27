@@ -1,27 +1,34 @@
 import { useState } from "react";
 import { Button, Card, Form, FormControl, FormGroup, FormLabel, Modal, Nav } from "react-bootstrap"
 import { Link } from "react-router-dom"
+import { useSelector } from "react-redux";
+import { selectToken } from "../../../store/slice/authSlice";
+import { usePutGroupNameMutation } from "../../../api/groupApi";
 
 function CardType(prop) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const [name, setName] = useState(prop.groupName);
-    
+    const token = useSelector(selectToken)
+
+    const [name, setName] = useState(prop.groupName)
+    const [editGroupName] = usePutGroupNameMutation()
     const handleSetNewValue = (value) => {
         setName(value);
     };
 
     const handleChangeNameOfGroup = async () => {
-        console.log(name);
-        handleClose();
+        handleClose()
+        console.log(prop.id)
+        const response = await editGroupName({body: { name: name }, token: token, id: prop.id})
+        console.log(response);
     };
 
     return (
         <Card key={prop.id} className="p-3">
             <Form className="d-flex justify-content-between">
-                {!prop.isAdmin ? (
+                {prop.isAdmin ? (
                     <>
                         <Link className="col-4 d-flex align-items-center justify-content-start">{prop.groupName}</Link>
                         <FormGroup className="col-6 d-flex justify-content-end">
