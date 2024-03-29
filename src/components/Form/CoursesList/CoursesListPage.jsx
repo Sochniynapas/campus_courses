@@ -7,8 +7,6 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useRef, useState } from "react"
 import { useGetGroupsQuery } from "../../../api/groupApi"
 import swal from "sweetalert"
-import JoditEditor, { Jodit } from "jodit-react"
-import CourseTextEditor from "../../TextEditors/CourseTextEditor"
 import CreateCourse from "../../Modals/CreateCourseModal"
 
 function CoursesList() {
@@ -18,23 +16,29 @@ function CoursesList() {
     const [groupName, setGroupName] = useState('')
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const [requirements, setRequirements] = useState('')
-    const [annotations, setAnnotations] = useState('')
 
-
+    const [fields, setFields] = useState({
+        name: '',
+        startYear: '',
+        maximumStudentsCount: '',
+        semester: '',
+        requirements: '',
+        annotations: '',
+        mainTeacherId: ''
+    });
     
 
     const [show, setShow] = useState(false);
     const handleClose = () => {
         setShow(false)
-        setRequirements('')
-        setAnnotations('')
+        setFields({reqirements:''})
+        setFields({annotations:''})
     };
     const handleShow = () => setShow(true);
 
     const { data: courses, error: coursesError, isError: coursesErrorStatus } = useGetListOfCoursesQuery({ token: token, id: id })
     const { data: groups, error: groupsError, isError: groupsErrorStatus } = useGetGroupsQuery(token)
-    
+
     useEffect(() => {
         if (courses) {
             console.log(courses)
@@ -98,11 +102,11 @@ function CoursesList() {
             <FormLabel className="fw-bold display-5 h1 pt-3 pb-3" >
                 {groupName}
             </FormLabel>
-            {!role.isAdmin && (
+            {role.isAdmin && (
                 <>
 
                     <Button className="col-1 mb-4 text-uppercase" onClick={handleShow}>Создать</Button>
-                    <CreateCourse show={show} handleClose={handleClose} setRequirements={setRequirements} setAnnotations={setAnnotations}/>
+                    <CreateCourse show={show} handleClose={handleClose} fields={fields} setFields={setFields}/>
                 </>
 
             )}
