@@ -1,9 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react/";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+
 
 const BASE_URL = 'https://camp-courses.api.kreosoft.space/'
 
 export const coursesApi = createApi({
-    reducerPath: "cousesApi",
+    reducerPath: "coursesApi",
     baseQuery: fetchBaseQuery({baseUrl: BASE_URL}),
     endpoints: (build) => ({
         getListOfCourses: build.query({

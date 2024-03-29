@@ -4,8 +4,8 @@ import { useEditUserProfileMutation, useGetUserProfileQuery } from "../../../api
 import { clearToken, selectRoles, selectToken, setRoles } from "../../../store/slice/authSlice"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import useDateFormatter from '../../../hooks/formattedDate'
-import formatedDate from "../../../hooks/formattedDate"
+import useDateFormatter from '../../../functions/formattedDate'
+import formatedDate from "../../../functions/formattedDate"
 import { ProfileValidation } from "../../../validation/userValidation"
 
 
