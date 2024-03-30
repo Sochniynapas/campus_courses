@@ -33,6 +33,14 @@ export const coursesApi = createApi({
                 }
             }),
             invalidatesTags: [{ type: 'Courses', id: 'LIST' }]
+        }),
+        getConcreteCourse: build.query({
+            query: ({token, id}) = {
+                url: `courses/${id}`,
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            }
         })
     })
 
@@ -40,5 +48,6 @@ export const coursesApi = createApi({
 
 export const {
     useGetListOfCoursesQuery,
-    useCreateCourseMutation
+    useCreateCourseMutation,
+    useGetConcreteCourseQuery
 } = coursesApi

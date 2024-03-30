@@ -39,6 +39,10 @@ const router = createBrowserRouter([
     path: "/groups/:id",
     element: <MainPage children={CoursesList} />
   },
+  {
+    path: "/courses/:id",
+    element: <MainPage  />
+  },
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(
 
