@@ -10,6 +10,7 @@ import { store } from './store/store.js'
 import Authorization from './components/Form/Authorization/AuthorizationPage.jsx'
 import Profile from './components/Form/Profile/ProfilePage.jsx'
 import CourseGroups from './components/Form/CourseGroups/CourseGroupsPage.jsx'
+import CoursesList from './components/Form/CoursesList/CoursesListPage.jsx'
 
 
 
@@ -33,6 +34,14 @@ const router = createBrowserRouter([
   {
     path: "/groups",
     element: <MainPage children={CourseGroups} />
+  },
+  {
+    path: "/groups/:id",
+    element: <MainPage children={CoursesList} />
+  },
+  {
+    path: "/courses/:id",
+    element: <MainPage  />
   },
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(

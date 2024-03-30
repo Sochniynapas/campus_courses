@@ -72,6 +72,14 @@ export const userApi = createApi({
                     Authorization: `Bearer ${token}`,
                 },
             })
+        }),
+        getAllUsers: build.query({
+            query: (token) =>({
+                url: "users",
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            })
         })
 
     })
@@ -85,6 +93,7 @@ export const {
     useLogoutUserMutation,
     useGetUserProfileQuery,
     useEditUserProfileMutation,
-    useGetUserRolesQuery
+    useGetUserRolesQuery,
+    useGetAllUsersQuery
 
 } = userApi
