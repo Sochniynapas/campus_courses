@@ -23,6 +23,22 @@ export const coursesApi = createApi({
                     [{ type: 'Courses', id: 'LIST' }]
                 ]
         }),
+        getConcreteCourse: build.query({
+            query: ({token, id}) => ({
+                url: `courses/${id}`,
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            })
+        }),
+        getCoursePage: build.query({
+            query: ({token, id}) => ({
+                url: `courses/${id}/details`,
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            })
+        }),
         createCourse: build.mutation({
             query: ({token, body, id}) =>({
                 url: `groups/${id}`,
@@ -34,14 +50,6 @@ export const coursesApi = createApi({
             }),
             invalidatesTags: [{ type: 'Courses', id: 'LIST' }]
         }),
-        getConcreteCourse: build.query({
-            query: ({token, id}) = {
-                url: `courses/${id}`,
-                headers:{
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        })
     })
 
 })
@@ -49,5 +57,6 @@ export const coursesApi = createApi({
 export const {
     useGetListOfCoursesQuery,
     useCreateCourseMutation,
-    useGetConcreteCourseQuery
+    useGetConcreteCourseQuery,
+    useGetCoursePageQuery
 } = coursesApi

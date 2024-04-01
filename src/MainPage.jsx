@@ -14,33 +14,31 @@ function MainPage(prop) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const [userLogout, requestData] = useLogoutUserMutation()
+  const [userLogout] = useLogoutUserMutation()
   const { data: userRoles } = useGetUserRolesQuery(token)
 
   const handleLogout = async () => {
-    try {
-      const response = await userLogout(token)
-      if (response && requestData.isError === false) {
+
+    const response = await userLogout(token)
+    if (response.data) {
+      dispatch(clearToken())
+      navigate('/')
+      swal({
+        title: "Успешно!",
+        text: "Вы вышли из аккаунта!",
+        icon: "success",
+        button: "Продолжить",
+      });
+    }
+    else {
+      if (response.error.status === 401) {
         dispatch(clearToken())
         navigate('/')
-        swal({
-          title: "Успешно!",
-          text: "Вы вышли из аккаунта!",
-          icon: "success",
-          button: "Продолжить",
-        });
       }
-      else {
-        if(response.error.status === 401){
-          dispatch(clearToken())
-          navigate('/')
-        }
-        throw new Error(response.error.status)
-      }
+
     }
-    catch (error) {
-      console.log(error)
-    }
+
+
   }
 
   useEffect(() => {

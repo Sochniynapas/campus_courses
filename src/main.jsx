@@ -11,6 +11,7 @@ import Authorization from './components/Form/Authorization/AuthorizationPage.jsx
 import Profile from './components/Form/Profile/ProfilePage.jsx'
 import CourseGroups from './components/Form/CourseGroups/CourseGroupsPage.jsx'
 import CoursesList from './components/Form/CoursesList/CoursesListPage.jsx'
+import ConcreteCourse from './components/Form/ConcreteCourse/ConcreteCoursePage.jsx'
 
 
 
@@ -41,7 +42,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/courses/:id",
-    element: <MainPage  />
+    element: <MainPage  children={ConcreteCourse}/>
   },
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(

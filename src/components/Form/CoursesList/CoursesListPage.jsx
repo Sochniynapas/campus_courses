@@ -1,4 +1,4 @@
-import { Button, Container, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Modal } from "react-bootstrap"
+import { Button, Container, Form, FormCheck, FormControl, FormGroup, FormLabel, FormSelect, Modal } from "react-bootstrap"
 import CourseInList from "./CourseInList"
 import { useGetListOfCoursesQuery } from "../../../api/coursesApi"
 import { useDispatch, useSelector } from "react-redux"
@@ -26,13 +26,13 @@ function CoursesList() {
         annotations: '',
         mainTeacherId: ''
     });
-    
-    
+
+
     const [show, setShow] = useState(false);
     const handleClose = () => {
         setShow(false)
-        setFields({reqirements:''})
-        setFields({annotations:''})
+        setFields({ reqirements: '' })
+        setFields({ annotations: '' })
     };
     const handleShow = () => setShow(true);
 
@@ -99,29 +99,31 @@ function CoursesList() {
 
     return (
         <Container className="d-flex flex-column ">
-            <FormLabel className="fw-bold display-5 h1 pt-3 pb-3" >
-                {groupName}
-            </FormLabel>
-            {role.isAdmin && (
-                <>
+            <Form className="d-flex flex-column ">
+                <FormLabel className="fw-bold display-5 h1 pt-3 pb-3" >
+                    {groupName}
+                </FormLabel>
+                {role.isAdmin && (
+                    <>
+                        <div>
+                            <Button className="mb-4 text-uppercase" onClick={handleShow}>Создать</Button>
+                        </div>
+                        <CreateCourse show={show} handleClose={handleClose} fields={fields} setFields={setFields} isAdmin={role.isAdmin}/>
+                    </>
 
-                    <Button className="col-1 mb-4 text-uppercase" onClick={handleShow}>Создать</Button>
-                    <CreateCourse show={show} handleClose={handleClose} fields={fields} setFields={setFields}/>
-                </>
-
-            )}
-            {courses && courses.map(course => (
-                <CourseInList
-                    key={course.id}
-                    name={course.name}
-                    id={course.id}
-                    year={course.startYear}
-                    maxStudents={course.maximumStudentsCount}
-                    remainSlots={course.remainingSlotsCount}
-                    semester={course.semester}
-                    status={course.status} />
-            ))}
-
+                )}
+                {courses && courses.map(course => (
+                    <CourseInList
+                        key={course.id}
+                        name={course.name}
+                        id={course.id}
+                        year={course.startYear}
+                        maxStudents={course.maximumStudentsCount}
+                        remainSlots={course.remainingSlotsCount}
+                        semester={course.semester}
+                        status={course.status} />
+                ))}
+            </Form>
         </Container>
     )
 }

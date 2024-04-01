@@ -1,7 +1,7 @@
 import JoditEditor, { Jodit } from "jodit-react"
 import { useRef } from "react"
 
-function CourseTextEditor({setValue, type}) {
+function CourseTextEditor({setValue, type, defaultValue}) {
     const config = {
         readonly: false,
         language: 'ru',
@@ -58,7 +58,6 @@ function CourseTextEditor({setValue, type}) {
         textIcons: false,
     }
     const editor = useRef(null)
-
     return (
         <>
             <JoditEditor
@@ -67,6 +66,7 @@ function CourseTextEditor({setValue, type}) {
                 tabIndex={1}
                 onBlur={newContent => setValue(type, newContent)}
                 onChange={newContent => { }}
+                value={defaultValue}
             />
         </>
     )
