@@ -1,16 +1,16 @@
 import { Button, FormCheck, FormControl, FormGroup, FormLabel, Modal } from "react-bootstrap"
-import CourseTextEditor from "../TextEditors/CourseTextEditor"
+import CourseTextEditor from "../../TextEditors/CourseTextEditor"
 import Select from "react-select"
-import { useGetAllUsersQuery } from "../../api/userApi"
+import { useGetAllUsersQuery } from "../../../api/userApi"
 import { useDispatch, useSelector } from "react-redux"
-import { clearToken, selectToken } from "../../store/slice/authSlice"
+import { selectToken } from "../../../store/slice/authSlice"
 import { useEffect, useState } from "react"
-import { useCreateCourseMutation } from "../../api/coursesApi"
+import { useCreateCourseMutation } from "../../../api/coursesApi"
 import { useNavigate, useParams } from "react-router-dom"
-import { SwalContent } from "./ModalsFunctions"
+import { SwalContent } from "./CreateUpdateModalFunctions"
 
 
-function CreateCourse({ show, handleClose, fields, setFields, isAdmin }) {
+function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
 
     const token = useSelector(selectToken)
     const { data: users, error: usersError } = useGetAllUsersQuery(token)
@@ -184,4 +184,4 @@ function CreateCourse({ show, handleClose, fields, setFields, isAdmin }) {
     )
 }
 
-export default CreateCourse
+export default CreateUpdateCourse

@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useRef, useState } from "react"
 import { useGetGroupsQuery } from "../../../api/groupApi"
 import swal from "sweetalert"
-import CreateCourse from "../../Modals/CreateCourseModal"
+import CreateUpdateCourse from "../../Modals/СreateCourseModal/CreateCourseModal"
 
 function CoursesList() {
     const token = useSelector(selectToken)
@@ -108,7 +108,7 @@ function CoursesList() {
                         <div>
                             <Button className="mb-4 text-uppercase" onClick={handleShow}>Создать</Button>
                         </div>
-                        <CreateCourse show={show} handleClose={handleClose} fields={fields} setFields={setFields} isAdmin={role.isAdmin}/>
+                        <CreateUpdateCourse show={show} handleClose={handleClose} fields={fields} setFields={setFields} isAdmin={role.isAdmin}/>
                     </>
 
                 )}

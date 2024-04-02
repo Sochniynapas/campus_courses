@@ -1,7 +1,39 @@
 import { Button, FormLabel } from "react-bootstrap"
 import { Link } from "react-router-dom"
+import ChangeResult from "../../../Modals/OtherModalsOfConcreteCourse/ChangeResultModal"
+import { useState } from "react"
 
-const User = ({ name, email, status, finalResult, midtermResult, last, isTeacher, isAdmin, currentUserEmail }) => {
+const User = (
+    {
+        name,
+        email,
+        status,
+        finalResult,
+        midtermResult,
+        last,
+        isTeacher,
+        isAdmin,
+        currentUserEmail,
+    }
+) => {
+    const [whichResult, setWhichResult] = useState({
+        middleResult: false,
+        finalResult: false
+    })
+    const handleShow = (type) => {
+        setWhichResult(prevFields => ({
+            ...prevFields,
+            [type]: true
+        }))
+    }
+
+    const handleClose = (type) => {
+        setWhichResult(prevFields => ({
+            ...prevFields,
+            [type]: false
+        }))
+    }
+
     return (
         <>
             {last ? (
@@ -36,7 +68,7 @@ const User = ({ name, email, status, finalResult, midtermResult, last, isTeacher
                                     {status !== "Declined" &&
                                         <>
                                             <div className="col-4">
-                                                <Link className="m-0">Промежуточная аттестация </Link>
+                                                <Link onClick={() => handleShow("middleResult")} className="m-0">Промежуточная аттестация </Link>
                                                 <span> - </span>
                                                 {midtermResult === "NotDefined" || midtermResult === null ? (
                                                     <FormLabel className="text-bg-secondary p-1 rounded-3 m-0 text-lowercase ">отметки нет</FormLabel>
@@ -45,9 +77,10 @@ const User = ({ name, email, status, finalResult, midtermResult, last, isTeacher
                                                 ) : midtermResult === "Failed" ? (
                                                     <FormLabel className="text-bg-danger p-1 rounded-3 m-0 text-lowercase ">зафейлена</FormLabel>
                                                 ) : null}
+
                                             </div>
                                             <div className="col-4">
-                                                <Link className="m-0">Финальная аттестация </Link>
+                                                <Link onClick={() => handleShow("finalResult")} className="m-0">Промежуточная аттестация </Link>
                                                 <span> - </span>
                                                 {finalResult === "NotDefined" || finalResult === null ? (
                                                     <FormLabel className="text-bg-secondary p-1 rounded-3 m-0 text-lowercase ">отметки нет</FormLabel>
@@ -57,6 +90,8 @@ const User = ({ name, email, status, finalResult, midtermResult, last, isTeacher
                                                     <FormLabel className="text-bg-danger p-1 rounded-3 m-0 text-lowercase ">зафейлена</FormLabel>
                                                 ) : null}
                                             </div>
+                                            <ChangeResult show={whichResult.middleResult} handleClose={() => handleClose("middleResult")} type={"Промежуточной аттестации"} name={name} />
+                                            <ChangeResult show={whichResult.finalResult} handleClose={() => handleClose("finalResult")} type={"Финальной аттестации"} name={name} />
                                         </>
                                     }
                                 </>
@@ -97,7 +132,7 @@ const User = ({ name, email, status, finalResult, midtermResult, last, isTeacher
                                     {status !== "Declined" &&
                                         <>
                                             <div className="col-4">
-                                                <Link className="m-0">Промежуточная аттестация </Link>
+                                                <Link onClick={() => handleShow("middleResult")} className="m-0">Промежуточная аттестация </Link>
                                                 <span> - </span>
                                                 {midtermResult === "NotDefined" || midtermResult === null ? (
                                                     <FormLabel className="text-bg-secondary p-1 rounded-3 m-0 text-lowercase ">отметки нет</FormLabel>
@@ -106,9 +141,10 @@ const User = ({ name, email, status, finalResult, midtermResult, last, isTeacher
                                                 ) : midtermResult === "Failed" ? (
                                                     <FormLabel className="text-bg-danger p-1 rounded-3 m-0 text-lowercase ">зафейлена</FormLabel>
                                                 ) : null}
+
                                             </div>
                                             <div className="col-4">
-                                                <Link className="m-0">Финальная аттестация </Link>
+                                                <Link onClick={() => handleShow("finalResult")} className="m-0">Финальная аттестация </Link>
                                                 <span> - </span>
                                                 {finalResult === "NotDefined" || finalResult === null ? (
                                                     <FormLabel className="text-bg-secondary p-1 rounded-3 m-0 text-lowercase ">отметки нет</FormLabel>
@@ -117,7 +153,10 @@ const User = ({ name, email, status, finalResult, midtermResult, last, isTeacher
                                                 ) : finalResult === "Failed" ? (
                                                     <FormLabel className="text-bg-danger p-1 rounded-3 m-0 text-lowercase ">зафейлена</FormLabel>
                                                 ) : null}
+
                                             </div>
+                                            <ChangeResult show={whichResult.middleResult} handleClose={() => handleClose("middleResult")} type={"Промежуточной аттестации"} name={name} />
+                                            <ChangeResult show={whichResult.finalResult} handleClose={() => handleClose("finalResult")} type={"Финальной аттестации"} name={name} />
                                         </>
                                     }
 
@@ -128,7 +167,6 @@ const User = ({ name, email, status, finalResult, midtermResult, last, isTeacher
                     }
                 </div >
             )}
-
         </>
     )
 }

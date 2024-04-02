@@ -9,8 +9,11 @@ import Status from "../../Status/StatusComponent"
 import Semester from "../../Semester/SemesterComponent"
 import CustomNotification from "./AtributesOfCourse.jsx/Notification"
 import Teacher from "./AtributesOfCourse.jsx/Teacher"
-import CreateCourse from "../../Modals/CreateCourseModal"
 import User from "./AtributesOfCourse.jsx/User"
+import CreateUpdateCourse from "../../Modals/СreateCourseModal/CreateCourseModal"
+import AddTeacher from "../../Modals/OtherModalsOfConcreteCourse/AddTeacherModal"
+import CreateNotification from "../../Modals/OtherModalsOfConcreteCourse/CreateNotificationModal"
+import ChangeStatus from "../../Modals/OtherModalsOfConcreteCourse/ChangeStatusModal"
 
 function ConcreteCourse() {
 
@@ -31,10 +34,29 @@ function ConcreteCourse() {
     });
 
     const [show, setShow] = useState(false);
-    const handleClose = () => {
-        setShow(false)
-    };
+    const handleClose = () => setShow(false)
     const handleShow = () => setShow(true);
+
+    const [showSimpleModal, setShowSimpleModal] = useState({
+        addTeacher: false,
+        changeMiddleResult: false,
+        changeFinalResult: false,
+        changeStatus: false,
+        createNotification: false
+    })
+    const handleCloseSimple = (type) => {
+        setShowSimpleModal(prevValues => ({
+            ...prevValues,
+            [type]: false
+        }))
+    }
+    const handleShowSimple = (type) => {
+        setShowSimpleModal(prevValues => ({
+            ...prevValues,
+            [type]: true
+        }))
+    }
+
 
     useEffect(() => {
         if (courseData) {
@@ -67,13 +89,12 @@ function ConcreteCourse() {
                     <FormLabel className="h1 pb-4 pt-4">{courseData.name}</FormLabel>
                     <FormGroup className="d-flex justify-content-between  flex-lg-row flex-column pb-1">
                         <FormLabel className="h3">Основные данный курса</FormLabel>
-
                         {(isTeacherOfCourse !== undefined || role.isAdmin) &&
                             <Button className="bg-warning text-uppercase text-black border-0 " onClick={handleShow}>
                                 Редактировать
                             </Button>
                         }
-                        <CreateCourse show={show} handleClose={handleClose} fields={fields} setFields={setFields} isAdmin={role.isAdmin} />
+                        <CreateUpdateCourse show={show} handleClose={handleClose} fields={fields} setFields={setFields} isAdmin={role.isAdmin} />
                     </FormGroup>
                     <Card>
                         <FormGroup className="d-flex justify-content-between  flex-lg-row flex-column pt-1 pb-1 ps-3 pe-3 border-bottom">
@@ -81,10 +102,19 @@ function ConcreteCourse() {
                                 <FormLabel className="fw-bold">Статус курса</FormLabel>
                                 <Status status={courseData.status} />
                             </div>
-                            {(isTeacherOfCourse !== undefined || role.isAdmin) &&
-                                <Button className="bg-warning text-uppercase text-black border-0 mt-2 mb-2">
-                                    Изменить
-                                </Button>
+                            {(isTeacherOfCourse !== undefined || role.isAdmin) ?
+                                (
+                                    <>
+                                        <Button onClick={() => handleShowSimple("changeStatus")} className="bg-warning text-uppercase text-black border-0 mt-2 mb-2">
+                                            Изменить
+                                        </Button>
+                                        <ChangeStatus show={showSimpleModal.changeStatus} handleClose={()=>handleCloseSimple("changeStatus")}/>
+                                    </>
+                                ) : (
+                                    <Button className="bg-success text-uppercase text-white border-0 mt-2 mb-2">
+                                        записаться на курс
+                                    </Button>
+                                )
                             }
                         </FormGroup>
                         <FormGroup className="d-flex justify-content-between  flex-lg-row flex-column pt-1 pb-1 ps-3 pe-3 border-bottom">
@@ -127,17 +157,22 @@ function ConcreteCourse() {
                                 <div dangerouslySetInnerHTML={{ __html: `${courseData.annotations}` }} />
                             </Tab>
                             <Tab eventKey="notifications" title={<>{`Уведомления `}<span className=" rounded-4 text-bg-danger ps-2 pe-2">{courseData.notifications.length}+</span></>} className="p-3 border-end border-start border-bottom">
-                                <TabContent className="d-flex flex-column">
+                                <TabContent key={id} className="d-flex flex-column">
                                     {(role.isAdmin || isTeacherOfCourse) &&
                                         <div className="pb-4">
-                                            <Button>
+                                            <Button onClick={() => handleShowSimple("createNotification")}>
                                                 Создать уведомление
                                             </Button>
+                                            <CreateNotification
+                                                show={showSimpleModal.createNotification}
+                                                handleClose={() => handleCloseSimple("createNotification")}
+                                            />
                                         </div>
                                     }
 
                                     {courseData.notifications.map((notification, index) => (
                                         <CustomNotification
+                                            key={index}
                                             isImportant={notification.isImportant}
                                             last={index === courseData.notifications.length - 1}
                                             text={notification.text}
@@ -155,8 +190,18 @@ function ConcreteCourse() {
                         >
                             <Tab eventKey="annotations" title="Преподаватели" className="p-3 border-end border-start border-bottom">
                                 <TabContent>
+                                    {(role.isAdmin || courseData.teachers.find(teacher => teacher.email === emailOfUser)) &&
+                                        <>
+                                            <Button className="mb-4" onClick={() => handleShowSimple("addTeacher")}>Добавить преподавателя</Button>
+                                            <AddTeacher
+                                                show={showSimpleModal.addTeacher}
+                                                handleClose={() => handleCloseSimple("addTeacher")}
+                                            />
+                                        </>
+                                    }
                                     {courseData.teachers.map((teacher, index) => (
                                         <Teacher
+                                            key={index}
                                             name={teacher.name}
                                             email={teacher.email}
                                             isMain={teacher.isMain}
@@ -170,6 +215,7 @@ function ConcreteCourse() {
                                 <TabContent className="d-flex flex-column">
                                     {courseData.students.map((student, index) => (
                                         <User
+                                            key={student.email}
                                             name={student.name}
                                             email={student.email}
                                             status={student.status}
@@ -179,6 +225,9 @@ function ConcreteCourse() {
                                             isTeacher={isTeacherOfCourse !== undefined}
                                             isAdmin={role.isAdmin}
                                             currentUserEmail={emailOfUser}
+                                            showSimpleModal={showSimpleModal}
+                                            handleCloseSimple={handleCloseSimple}
+                                            handleShowSimple={handleShowSimple}
                                         />
                                     ))}
                                 </TabContent>

@@ -1,4 +1,4 @@
-import { clearToken } from "../../store/slice/authSlice";
+import { clearToken } from "../../../store/slice/authSlice";
 
 
 export function SwalContent(statusCode, handleClose, dispatch, navigate) {
