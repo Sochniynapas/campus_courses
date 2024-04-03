@@ -1,13 +1,13 @@
 
 import { clearToken } from "../../../../store/slice/authSlice";
 
-export default function SwalStatusContent(statusCode, text, handleClose, dispatch, navigate) {
+export default function SwalAddTeacherContent(statusCode, handleClose, dispatch, navigate) {
 
     switch (statusCode) {
         case 200:
             swal({
                 title: "Успешно!",
-                text: text,
+                text: "Вы добавили нового преподавателя!",
                 icon: "success",
                 button: "Продолжить"
             })

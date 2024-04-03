@@ -1,10 +1,10 @@
 import { Button, FormCheck, FormLabel, Modal } from "react-bootstrap"
 import { useEditCoursesStatusMutation } from "../../../../api/coursesApi"
 import { useState } from "react"
-import { SwalStatusContent } from "./ChangeStatusModal"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { selectToken } from "../../../../store/slice/authSlice"
+import SwalStatusContent from "./ChangeStatusModalFunctions"
 
 
 
@@ -24,12 +24,13 @@ const ChangeStatus = ({show, handleClose}) => {
             if(response.error.status === 400){
                 setRequired(true)
             }
-            SwalStatusContent(response.error.status, "", handleClose, dispatch, navigate)
+            SwalStatusContent(response.error.status, handleClose, dispatch, navigate)
         }
         else{
             setRequired(false)
             setStatus("")
-            SwalStatusContent(200, "Вы успешно изменили статус курса!", handleClose, dispatch, navigate)
+            handleClose()
+            SwalStatusContent(200, handleClose, dispatch, navigate)
         }
     }
     return (

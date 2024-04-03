@@ -108,5 +108,5 @@ export const {
     useEditCoursesAnnotationsAndRequirementsMutation,
     useEditCourseMutation,
     useEditCoursesStatusMutation,
-    use
+    useAddTeacherOnCourseMutation
 } = coursesApi

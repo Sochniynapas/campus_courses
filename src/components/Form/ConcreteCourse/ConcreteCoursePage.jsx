@@ -11,7 +11,7 @@ import CustomNotification from "./AtributesOfCourse.jsx/Notification"
 import Teacher from "./AtributesOfCourse.jsx/Teacher"
 import User from "./AtributesOfCourse.jsx/User"
 import CreateUpdateCourse from "../../Modals/СreateCourseModal/CreateCourseModal"
-import AddTeacher from "../../Modals/OtherModalsOfConcreteCourse/AddTeacherModal"
+import AddTeacher from "../../Modals/OtherModalsOfConcreteCourse/AddTeacherModal/AddTeacherModal"
 import CreateNotification from "../../Modals/OtherModalsOfConcreteCourse/CreateNotificationModal"
 import ChangeStatus from "../../Modals/OtherModalsOfConcreteCourse/ChangeStatusModal/ChangeStatusModal"
 
