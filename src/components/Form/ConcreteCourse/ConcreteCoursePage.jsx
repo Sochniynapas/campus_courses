@@ -108,13 +108,12 @@ function ConcreteCourse() {
                                         <Button onClick={() => handleShowSimple("changeStatus")} className="bg-warning text-uppercase text-black border-0 mt-2 mb-2">
                                             Изменить
                                         </Button>
-                                        <ChangeStatus show={showSimpleModal.changeStatus} handleClose={()=>handleCloseSimple("changeStatus")}/>
+                                        <ChangeStatus show={showSimpleModal.changeStatus} handleClose={() => handleCloseSimple("changeStatus")} />
                                     </>
-                                ) : (
-                                    <Button className="bg-success text-uppercase text-white border-0 mt-2 mb-2">
-                                        записаться на курс
-                                    </Button>
-                                )
+                                ) : !courseData.students.find(student => student.email === currentUserEmail) ? (
+                                    <Button className="bg-success text-uppercase text-white border-0 mt-2 mb-2">записаться на курс</Button>
+                                ) : null
+
                             }
                         </FormGroup>
                         <FormGroup className="d-flex justify-content-between  flex-lg-row flex-column pt-1 pb-1 ps-3 pe-3 border-bottom">
