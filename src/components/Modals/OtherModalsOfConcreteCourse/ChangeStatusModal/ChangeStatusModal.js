@@ -1,7 +1,8 @@
-import { clearToken } from "../../../store/slice/authSlice";
 
+import { clearToken } from "../../../../store/slice/authSlice";
 
-export function SwalContent(statusCode, text, handleClose, dispatch, navigate) {
+export default function SwalStatusContent(statusCode, text, handleClose, dispatch, navigate) {
+
     switch (statusCode) {
         case 200:
             swal({
@@ -15,7 +16,7 @@ export function SwalContent(statusCode, text, handleClose, dispatch, navigate) {
         case 400:
             swal({
                 title: "Ошибка",
-                text: "Проверьте введённые поля",
+                text: "Проверьте, корректен ли ваш выбор",
                 icon: "error",
                 button: "Продолжить",
             });
@@ -31,12 +32,12 @@ export function SwalContent(statusCode, text, handleClose, dispatch, navigate) {
                 button: "Продолжить",
             });
             break
-        case 403:
+        case 404:
             handleClose()
             navigate("/")
             swal({
                 title: "Ошибка",
-                text: "У вас нет прав на создание курсов",
+                text: "Не удалось ничего найти по данному запросу",
                 icon: "error",
                 button: "Продолжить",
             });

@@ -1,30 +1,33 @@
 import { Button, FormCheck, FormControl, FormGroup, FormLabel, Modal } from "react-bootstrap"
 import CourseTextEditor from "../../TextEditors/CourseTextEditor"
 import Select from "react-select"
-import { useGetAllUsersQuery } from "../../../api/userApi"
 import { useDispatch, useSelector } from "react-redux"
 import { selectToken } from "../../../store/slice/authSlice"
-import { useEffect, useState } from "react"
-import { useCreateCourseMutation } from "../../../api/coursesApi"
+import { useCreateCourseMutation, useEditCourseMutation, useEditCoursesAnnotationsAndRequirementsMutation } from "../../../api/coursesApi"
 import { useNavigate, useParams } from "react-router-dom"
 import { SwalContent } from "./CreateUpdateModalFunctions"
+import { useGetTransformedUsers } from "../../../hooks/useGetTransformedUsers"
 
 
 function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
 
     const token = useSelector(selectToken)
-    const { data: users, error: usersError } = useGetAllUsersQuery(token)
-    const [transformedUsers, setTransformedUsers] = useState([])
+    const transformedUsers = useGetTransformedUsers()
+
     const { id } = useParams()
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [createCourse] = useCreateCourseMutation()
+    const [updateCourse] = useEditCourseMutation()
+
+    const [updateReqAndAnnot] = useEditCoursesAnnotationsAndRequirementsMutation()
 
     const dateValid = /^(200\d|201\d|202[0-5])$/
     const countValid = /^(\d|[1-9]\d|1\d\d|200)$/
 
     const locate = window.location.pathname
     const isCourseWindow = /courses/
+
 
     const handleFieldChange = (fieldName, value) => {
         setFields(prevFields => ({
@@ -33,11 +36,8 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
         }))
 
     }
-    const handleAutoPickSemester = () => {
-        if (fields.semester === "Autumn") {
-            return true
-        }
-        else if (fields.semester === "Spring") {
+    const handleAutoPickSemester = (type) => {
+        if (fields.semester === type) {
             return true
         }
         else {
@@ -45,29 +45,37 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
         }
     }
     const handleCUCourse = async () => {
-        if (isCourseWindow) {
 
+        if (isCourseWindow) {
+            if (isAdmin) {
+                const response = await updateCourse({ token: token, body: fields, id: id })
+                if (response.data) {
+                    SwalContent(200, "Вы успешно изменили курс!", handleClose, navigate)
+                }
+                else {
+                    SwalContent(response.error.status, handleClose, dispatch, navigate)
+                }
+            }
+            else {
+                const response = await updateReqAndAnnot({ token: token, id: id, data: { requirements: fields.requirements, annotations: fields.annotations } })
+                if (response.data) {
+                    SwalContent(200, "Вы успешно изменили курс!", handleClose, navigate)
+                }
+                else {
+                    SwalContent(response.error.status, handleClose, dispatch, navigate)
+                }
+            }
         }
         else {
             const response = await createCourse({ token: token, body: fields, id: id })
             if (response.data) {
-                SwalContent(200, handleClose, navigate)
+                SwalContent(200,"Вы успешно создали курс!", handleClose, navigate)
             }
             else {
                 SwalContent(response.error.status, handleClose, dispatch, navigate)
             }
         }
     }
-
-    useEffect(() => {
-        if (users) {
-            const transformedUsers = users.map(user => ({
-                value: user.id,
-                label: user.fullName
-            }))
-            setTransformedUsers(transformedUsers)
-        }
-    }, [users, usersError])
 
 
     return (
@@ -119,8 +127,8 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
                                     name="group1"
                                     type={'radio'}
                                     id={`inline-${'radio'}-1`}
-                                    defaultChecked={handleAutoPickSemester()}
-                                    onChange={() => {
+                                    defaultChecked={handleAutoPickSemester("Autumn")}
+                                    onClick={() => {
                                         handleFieldChange('semester', 'Autumn')
                                     }}
 
@@ -131,8 +139,8 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
                                     name="group1"
                                     type={'radio'}
                                     id={`inline-${'radio'}-2`}
-                                    defaultChecked={handleAutoPickSemester()}
-                                    onChange={() => {
+                                    defaultChecked={handleAutoPickSemester("Spring")}
+                                    onClick={() => {
                                         handleFieldChange('semester', 'Spring')
                                     }}
                                 />
@@ -147,25 +155,25 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
                     }
                     <FormGroup className="pb-4">
                         <FormLabel>Требования</FormLabel>
-                        <CourseTextEditor defaultValue={fields.requirements} setValue={handleFieldChange} type={"requirements"} />
+                        <CourseTextEditor defaultValue={fields.requirements} setValue={handleCUCourse} type={"requirements"} />
                         {!fields.requirements &&
                             <FormLabel className="text-danger">Поле не должно оставаться нетронутым</FormLabel>
                         }
                     </FormGroup>
                     <FormGroup className="pb-4">
                         <FormLabel>Аннотации</FormLabel>
-                        <CourseTextEditor defaultValue={fields.annotations} setValue={handleFieldChange} type={"annotations"} />
+                        <CourseTextEditor defaultValue={fields.annotations} setValue={handleCUCourse} type={"annotations"} />
                         {!fields.annotations &&
                             <FormLabel className="text-danger">Поле не должно оставаться нетронутым</FormLabel>
                         }
                     </FormGroup>
                     {isAdmin &&
                         <>
-                            <FormLabel>Оснвной преподаватель курса</FormLabel>
-                            {users &&
+                            <FormLabel>Основной преподаватель курса</FormLabel>
+                            {transformedUsers &&
                                 <Select options={transformedUsers} onChange={(selectedOption) => handleFieldChange('mainTeacherId', selectedOption.value)}></Select>
                             }
-                            {!fields.mainTeacherId &&
+                            {(!fields.mainTeacherId && !isCourseWindow.test(locate)) &&
                                 <FormLabel className="text-danger">Выберите основного преподавателя</FormLabel>
                             }
                         </>

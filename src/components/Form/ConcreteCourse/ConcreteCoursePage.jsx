@@ -13,7 +13,7 @@ import User from "./AtributesOfCourse.jsx/User"
 import CreateUpdateCourse from "../../Modals/СreateCourseModal/CreateCourseModal"
 import AddTeacher from "../../Modals/OtherModalsOfConcreteCourse/AddTeacherModal"
 import CreateNotification from "../../Modals/OtherModalsOfConcreteCourse/CreateNotificationModal"
-import ChangeStatus from "../../Modals/OtherModalsOfConcreteCourse/ChangeStatusModal"
+import ChangeStatus from "../../Modals/OtherModalsOfConcreteCourse/ChangeStatusModal/ChangeStatusModal"
 
 function ConcreteCourse() {
 
@@ -108,7 +108,10 @@ function ConcreteCourse() {
                                         <Button onClick={() => handleShowSimple("changeStatus")} className="bg-warning text-uppercase text-black border-0 mt-2 mb-2">
                                             Изменить
                                         </Button>
-                                        <ChangeStatus show={showSimpleModal.changeStatus} handleClose={() => handleCloseSimple("changeStatus")} />
+                                        <ChangeStatus
+                                            show={showSimpleModal.changeStatus}
+                                            handleClose={() => handleCloseSimple("changeStatus")}
+                                        />
                                     </>
                                 ) : !courseData.students.find(student => student.email === currentUserEmail) ? (
                                     <Button className="bg-success text-uppercase text-white border-0 mt-2 mb-2">записаться на курс</Button>
@@ -129,11 +132,11 @@ function ConcreteCourse() {
                         <FormGroup className="d-flex justify-content-between  flex-lg-row flex-column pt-1 pb-1 ps-3 pe-3 border-bottom">
                             <div className="d-flex flex-column col-6">
                                 <FormLabel className="fw-bold">Всего мест</FormLabel>
-                                <FormLabel >{courseData.studentsEnrolledCount}</FormLabel>
+                                <FormLabel >{courseData.maximumStudentsCount}</FormLabel>
                             </div>
                             <div className="d-flex flex-column col-6">
                                 <FormLabel className="fw-bold">Студентов зачислено</FormLabel>
-                                <FormLabel >{courseData.students.length}</FormLabel>
+                                <FormLabel >{courseData.studentsEnrolledCount}</FormLabel>
                             </div>
                         </FormGroup>
                         <FormGroup className="d-flex justify-content-between  flex-lg-row flex-column pt-1 pb-1 ps-3 pe-3">
