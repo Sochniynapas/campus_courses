@@ -22,7 +22,7 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
 
     const [updateReqAndAnnot] = useEditCoursesAnnotationsAndRequirementsMutation()
 
-    const dateValid = /^(200\d|201\d|202[0-5])$/
+    const dateValid = /^(200\d|201\d|202[0-9])$/
     const countValid = /^(\d|[1-9]\d|1\d\d|200)$/
 
     const locate = window.location.pathname

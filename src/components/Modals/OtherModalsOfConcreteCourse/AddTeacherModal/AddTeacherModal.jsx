@@ -14,7 +14,9 @@ const AddTeacher = ({ show, handleClose }) => {
 
     const [addTeacher] = useAddTeacherOnCourseMutation()
     const transformedUsers = useGetTransformedUsers()
-    const [teacher, setTeacher] = useState({})
+    const [teacher, setTeacher] = useState({
+        userId: ""
+    })
     const [isSelect, setIsSelect] = useState(false)
 
     const dispatch = useDispatch()
@@ -33,10 +35,16 @@ const AddTeacher = ({ show, handleClose }) => {
             SwalAddTeacherContent(response.error.status, handleClose, dispatch, navigate)
         }
         else {
-            handleClose()
             setIsSelect(false)
+            handleClose()
+            setTeacher({})
             SwalAddTeacherContent(200, handleClose, dispatch, navigate)
         }
+    }
+
+    const handleClearOption = () =>{
+        setTeacher({})
+        handleClose()
     }
 
     return (
@@ -59,7 +67,7 @@ const AddTeacher = ({ show, handleClose }) => {
                 }
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={handleClose} variant="secondary">
+                <Button onClick={handleClearOption} variant="secondary">
                     Отмена
                 </Button>
                 <Button variant="primary" onClick={handleAddTeacher}>Сохранить</Button>

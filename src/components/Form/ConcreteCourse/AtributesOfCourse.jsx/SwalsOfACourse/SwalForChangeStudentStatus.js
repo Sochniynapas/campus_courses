@@ -1,14 +1,13 @@
 
-import { clearToken } from "../../../../store/slice/authSlice";
+import { clearToken } from "../../../../../store/slice/authSlice";
 
-export default function SwalAddTeacherContent(statusCode, handleClose, dispatch, navigate) {
+export default function SwalChangeStudentStatusContent(statusCode, type, dispatch, navigate) {
 
     switch (statusCode) {
         case 200:
-            handleClose()
             swal({
                 title: "Успешно!",
-                text: "Вы добавили нового преподавателя!",
+                text: `Вы успешно ${type} заявку`,
                 icon: "success",
                 button: "Продолжить"
             })
@@ -16,13 +15,13 @@ export default function SwalAddTeacherContent(statusCode, handleClose, dispatch,
         case 400:
             swal({
                 title: "Ошибка",
-                text: "Проверьте, корректен ли ваш выбор",
+                text: "Вы уже отправили заявку на рассмотрение",
                 icon: "error",
                 button: "Продолжить",
             });
             break
         case 401:
-            handleClose()
+
             dispatch(clearToken())
             navigate("/")
             swal({
@@ -33,7 +32,8 @@ export default function SwalAddTeacherContent(statusCode, handleClose, dispatch,
             });
             break
         case 404:
-            handleClose()
+
+            navigate("/")
             swal({
                 title: "Ошибка",
                 text: "Не удалось ничего найти по данному запросу",
@@ -42,7 +42,7 @@ export default function SwalAddTeacherContent(statusCode, handleClose, dispatch,
             });
             break
         default:
-            handleClose()
+
             swal({
                 title: "Ошибка",
                 text: "Произошла непредвиденная ошибка",

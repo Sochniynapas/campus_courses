@@ -39,7 +39,7 @@ export const coursesApi = createApi({
                 }
             }),
             providesTags: (result, id) => [{ type: 'ConcreteCourse', id: 'LIST' }]
-                
+
         }),
         createCourse: build.mutation({
             query: ({ token, body, id }) => ({
@@ -107,6 +107,38 @@ export const coursesApi = createApi({
             }),
             invalidatesTags: [{ type: 'ConcreteCourse', id: 'LIST' }]
         }),
+        createNotification: build.mutation({
+            query: ({ token, body, id }) => ({
+                url: `courses/${id}/notifications`,
+                body: body,
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }),
+            invalidatesTags: [{ type: 'ConcreteCourse', id: 'LIST' }]
+        }),
+        signUpForACourse: build.mutation({
+            query: ({ token, id }) => ({
+                url: `courses/${id}/sign-up`,
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }),
+            invalidatesTags: [{ type: 'ConcreteCourse', id: 'LIST' }]
+        }),
+        changeUserStatus: build.mutation({
+            query: ({ token, body, courseId, studentId}) => ({
+                url: `courses/${courseId}/student-status/${studentId}`,
+                method: 'POST',
+                body: body,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }),
+            invalidatesTags: [{ type: 'ConcreteCourse', id: 'LIST' }]
+        })
     })
 
 })
@@ -120,5 +152,8 @@ export const {
     useEditCourseMutation,
     useEditCoursesStatusMutation,
     useAddTeacherOnCourseMutation,
-    useEditStudentMarkMutation
+    useEditStudentMarkMutation,
+    useCreateNotificationMutation,
+    useSignUpForACourseMutation,
+    useChangeUserStatusMutation
 } = coursesApi

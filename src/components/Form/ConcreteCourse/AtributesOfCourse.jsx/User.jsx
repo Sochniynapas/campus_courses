@@ -1,7 +1,12 @@
 import { Button, FormLabel } from "react-bootstrap"
-import { Link } from "react-router-dom"
-import { useState } from "react"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
 import ChangeResult from "../../../Modals/OtherModalsOfConcreteCourse/ChangeResultModal/ChangeResultModal"
+import { useChangeUserStatusMutation } from "../../../../api/coursesApi"
+import SwalChangeStudentStatusContent from "./SwalsOfACourse/SwalForChangeStudentStatus"
+import { useDispatch, useSelector } from "react-redux"
+import { selectToken } from "../../../../store/slice/authSlice"
+
 
 const User = (
     {
@@ -12,6 +17,14 @@ const User = (
         currentUserEmail,
     }
 ) => {
+    const [editStudentStatus] = useChangeUserStatusMutation()
+
+    const { id } = useParams()
+    const token = useSelector(selectToken)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    const [studentStatus, setStudentStatus] = useState("")
     const [whichResult, setWhichResult] = useState({
         middleResult: false,
         finalResult: false
@@ -30,6 +43,39 @@ const User = (
         }))
     }
 
+    const handleEditStudentStatus = async () => {
+        const response = await editStudentStatus({ token: token, body: { status: studentStatus }, courseId: id, studentId: student.id })
+        console.log(response)
+        if (response.error) {
+            SwalChangeStudentStatusContent(response.error.status, "", dispatch, navigate)
+        }
+        else {
+
+            if (studentStatus === "Declined") {
+                SwalChangeStudentStatusContent(200, "отклонили", dispatch, navigate)
+                setStudentStatus("")
+            }
+            else {
+                SwalChangeStudentStatusContent(200, "приняли", dispatch, navigate)
+                setStudentStatus("")
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (studentStatus !== "") {
+            handleEditStudentStatus()
+        }
+    }, [studentStatus])
+
+    const handleClick = (status) => {
+        if (status === "Declined") {
+            setStudentStatus("Declined")
+        }
+        else {
+            setStudentStatus("Accepted")
+        }
+    }
     return (
         <>
 
@@ -54,10 +100,10 @@ const User = (
                     <>
                         {student.status === "InQueue" ? (
                             <div className="col-lg-6 d-flex flex-row justify-content-lg-end  ">
-                                <Button className="me-3 col-lg-3">
+                                <Button onClick={() => handleClick("Accepted")} className="me-3 col-lg-3">
                                     Принять
                                 </Button>
-                                <Button className="text-bg-danger border-0 col-lg-3">
+                                <Button onClick={() => handleClick("Declined")} className="text-bg-danger border-0 col-lg-3">
                                     Отклонить заявку
                                 </Button>
                             </div>

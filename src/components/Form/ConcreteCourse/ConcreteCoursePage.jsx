@@ -1,9 +1,9 @@
 
 import { Button, Card, Container, Form, FormGroup, FormLabel, Tab, TabContent, Tabs } from "react-bootstrap"
-import { useParams } from "react-router-dom"
-import { useGetCoursePageQuery } from "../../../api/coursesApi"
+import { useNavigate, useParams } from "react-router-dom"
+import { useGetCoursePageQuery, useSignUpForACourseMutation } from "../../../api/coursesApi"
 import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { selectLogin, selectRoles, selectToken } from "../../../store/slice/authSlice"
 import Status from "../../Status/StatusComponent"
 import Semester from "../../Semester/SemesterComponent"
@@ -12,17 +12,21 @@ import Teacher from "./AtributesOfCourse.jsx/Teacher"
 import User from "./AtributesOfCourse.jsx/User"
 import CreateUpdateCourse from "../../Modals/СreateCourseModal/CreateCourseModal"
 import AddTeacher from "../../Modals/OtherModalsOfConcreteCourse/AddTeacherModal/AddTeacherModal"
-import CreateNotification from "../../Modals/OtherModalsOfConcreteCourse/CreateNotificationModal"
+import CreateNotification from "../../Modals/OtherModalsOfConcreteCourse/CreateNotificationModal/CreateNotificationModal"
 import ChangeStatus from "../../Modals/OtherModalsOfConcreteCourse/ChangeStatusModal/ChangeStatusModal"
+import SwalSignUpToACourseContent from "./AtributesOfCourse.jsx/SwalsOfACourse/SwalForSignUpToACourse"
 
 function ConcreteCourse() {
 
     const { id } = useParams()
     const token = useSelector(selectToken)
-    const { data: courseData, error: getCourseError } = useGetCoursePageQuery({ token, id })
-    const emailOfUser = useSelector(selectLogin)
     const role = useSelector(selectRoles)
+    const emailOfUser = useSelector(selectLogin)
+
     const [isTeacherOfCourse, setIsTeacherOfCourse] = useState({})
+    const [signUpToACourse] = useSignUpForACourseMutation()
+    const { data: courseData, error: getCourseError } = useGetCoursePageQuery({ token, id })
+
     const [fields, setFields] = useState({
         name: '',
         startYear: '',
@@ -32,6 +36,8 @@ function ConcreteCourse() {
         annotations: '',
         mainTeacherId: ''
     });
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false)
@@ -57,6 +63,17 @@ function ConcreteCourse() {
         }))
     }
 
+    const handleSignUp = async () => {
+        const response = await signUpToACourse({ token: token, id: id })
+        if (response.error) {
+
+            SwalSignUpToACourseContent(response.error.status, dispatch, navigate)
+        }
+        else {
+
+            SwalSignUpToACourseContent(200, dispatch, navigate)
+        }
+    }
 
     useEffect(() => {
         if (courseData) {
@@ -113,8 +130,8 @@ function ConcreteCourse() {
                                             handleClose={() => handleCloseSimple("changeStatus")}
                                         />
                                     </>
-                                ) : !courseData.students.find(student => student.email === currentUserEmail) ? (
-                                    <Button className="bg-success text-uppercase text-white border-0 mt-2 mb-2">записаться на курс</Button>
+                                ) : !courseData.students.find(student => student.email === emailOfUser) ? (
+                                    <Button className="bg-success text-uppercase text-white border-0 mt-2 mb-2" onClick={handleSignUp}>записаться на курс</Button>
                                 ) : null
 
                             }
