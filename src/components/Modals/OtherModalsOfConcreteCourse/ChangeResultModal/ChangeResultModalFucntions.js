@@ -1,14 +1,14 @@
 
 import { clearToken } from "../../../../store/slice/authSlice";
 
-export default function SwalStatusContent(statusCode, handleClose, dispatch, navigate) {
+export default function SwalMarkContent(statusCode, handleClose, dispatch, navigate) {
 
     switch (statusCode) {
         case 200:
             handleClose()
             swal({
                 title: "Успешно!",
-                text: "Вы успешно изменили статус курса!",
+                text: "Вы успешно изменили оценку по аттестации студента!",
                 icon: "success",
                 button: "Продолжить"
             })

@@ -5,13 +5,13 @@ export default function SwalAddTeacherContent(statusCode, handleClose, dispatch,
 
     switch (statusCode) {
         case 200:
+            handleClose()
             swal({
                 title: "Успешно!",
                 text: "Вы добавили нового преподавателя!",
                 icon: "success",
                 button: "Продолжить"
             })
-            handleClose()
             break
         case 400:
             swal({

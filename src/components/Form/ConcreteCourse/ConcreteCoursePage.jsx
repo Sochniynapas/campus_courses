@@ -153,10 +153,10 @@ function ConcreteCourse() {
                             justify
                         >
                             <Tab eventKey="requirements" title="Требования к курсу" className="p-3 border-end border-start border-bottom">
-                                <div dangerouslySetInnerHTML={{ __html: `${courseData.requirements}` }} />
+                                <div className="text-break" dangerouslySetInnerHTML={{ __html: `${courseData.requirements}` }} />
                             </Tab>
                             <Tab eventKey="annotations" title="Аннотации" className="p-3 border-end border-start border-bottom">
-                                <div dangerouslySetInnerHTML={{ __html: `${courseData.annotations}` }} />
+                                <div className="text-break" dangerouslySetInnerHTML={{ __html: `${courseData.annotations}` }} />
                             </Tab>
                             <Tab eventKey="notifications" title={<>{`Уведомления `}<span className=" rounded-4 text-bg-danger ps-2 pe-2">{courseData.notifications.length}+</span></>} className="p-3 border-end border-start border-bottom">
                                 <TabContent key={id} className="d-flex flex-column">
@@ -218,11 +218,7 @@ function ConcreteCourse() {
                                     {courseData.students.map((student, index) => (
                                         <User
                                             key={student.email}
-                                            name={student.name}
-                                            email={student.email}
-                                            status={student.status}
-                                            finalResult={student.finalResult}
-                                            midtermResult={student.midtermResult}
+                                            student={student}
                                             last={index === courseData.students.length - 1}
                                             isTeacher={isTeacherOfCourse !== undefined}
                                             isAdmin={role.isAdmin}

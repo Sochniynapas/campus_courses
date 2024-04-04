@@ -46,10 +46,11 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
     }
     const handleCUCourse = async () => {
 
-        if (isCourseWindow) {
+        if (isCourseWindow.test(locate)) {
             if (isAdmin) {
                 const response = await updateCourse({ token: token, body: fields, id: id })
                 if (response.data) {
+                    console.log(response)
                     SwalContent(200, "Вы успешно изменили курс!", handleClose, navigate)
                 }
                 else {
@@ -155,14 +156,14 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
                     }
                     <FormGroup className="pb-4">
                         <FormLabel>Требования</FormLabel>
-                        <CourseTextEditor defaultValue={fields.requirements} setValue={handleCUCourse} type={"requirements"} />
+                        <CourseTextEditor defaultValue={fields.requirements} setValue={handleFieldChange} type={"requirements"} />
                         {!fields.requirements &&
                             <FormLabel className="text-danger">Поле не должно оставаться нетронутым</FormLabel>
                         }
                     </FormGroup>
                     <FormGroup className="pb-4">
                         <FormLabel>Аннотации</FormLabel>
-                        <CourseTextEditor defaultValue={fields.annotations} setValue={handleCUCourse} type={"annotations"} />
+                        <CourseTextEditor defaultValue={fields.annotations} setValue={handleFieldChange} type={"annotations"} />
                         {!fields.annotations &&
                             <FormLabel className="text-danger">Поле не должно оставаться нетронутым</FormLabel>
                         }

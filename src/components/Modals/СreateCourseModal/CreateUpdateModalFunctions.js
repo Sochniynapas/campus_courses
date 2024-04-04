@@ -4,13 +4,13 @@ import { clearToken } from "../../../store/slice/authSlice";
 export function SwalContent(statusCode, text, handleClose, dispatch, navigate) {
     switch (statusCode) {
         case 200:
+            handleClose()
             swal({
                 title: "Успешно!",
                 text: text,
                 icon: "success",
                 button: "Продолжить"
             })
-            handleClose()
             break
         case 400:
             swal({

@@ -96,6 +96,17 @@ export const coursesApi = createApi({
             }),
             invalidatesTags: [{ type: 'ConcreteCourse', id: 'LIST' }]
         }),
+        editStudentMark: build.mutation({
+            query: ({ token, body, courseId, studentId }) => ({
+                url: `courses/${courseId}/marks/${studentId}`,
+                body: body,
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }),
+            invalidatesTags: [{ type: 'ConcreteCourse', id: 'LIST' }]
+        }),
     })
 
 })
@@ -108,5 +119,6 @@ export const {
     useEditCoursesAnnotationsAndRequirementsMutation,
     useEditCourseMutation,
     useEditCoursesStatusMutation,
-    useAddTeacherOnCourseMutation
+    useAddTeacherOnCourseMutation,
+    useEditStudentMarkMutation
 } = coursesApi
