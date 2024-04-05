@@ -12,8 +12,8 @@ function Authorization() {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [authFields, setAuthFields] = useState({
-        email: 'handie228228@mail.ru',
-        password: 'Sukanah1!'
+        email: 'gymboss@gachi.com',
+        password: 'B0yNextD00r'
     })
     const [fail, setFail] = useState(false)
 

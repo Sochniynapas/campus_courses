@@ -1,6 +1,7 @@
 import { Card, FormGroup, FormLabel } from "react-bootstrap"
 import Status from "../../Status/StatusComponent"
 import Semester from "../../Semester/SemesterComponent"
+import { Link } from "react-router-dom"
 
 function CourseInList(prop) {
     return (
@@ -8,9 +9,9 @@ function CourseInList(prop) {
         <Card key={prop.id}>
             <FormGroup className="d-flex flex-column p-2">
                 <FormGroup className="d-flex flex-lg-row flex-column justify-content-between ">
-                    <FormLabel className="fw-bold h4">
+                    <Link className="fw-bold h4 text-decoration-none" to={`/courses/${prop.id}`}>
                         {prop.name}
-                    </FormLabel>
+                    </Link>
                     <FormLabel className="fw-bold text-success ">
                         <Status status = {prop.status}/>
                     </FormLabel>

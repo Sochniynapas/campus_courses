@@ -31,7 +31,6 @@ function CourseGroups() {
     }
     const handleCreateNewGroup = async() => {
         const response = await createGroup({token: token, name: name})
-        console.log(response)
         if(response.error){
             if(response.error.status === 401){
                 dispatch(clearToken())

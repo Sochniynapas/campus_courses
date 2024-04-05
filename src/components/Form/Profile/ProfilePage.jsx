@@ -24,9 +24,21 @@ function Profile() {
     const handleEdit = async () => {
         const body = { fullName: profileFields.name, birthDate: profileFields.bDate }
         const response = await editUserProfile({ body: body, token: token })
-        if (response.error && response.error.status === 401) {
+        if (response.data) {
+            swal({
+                title: "Успешно!",
+                text: "Вы изменили профиль!",
+                icon: "success",
+                button: "Продолжить",
+            });
             dispatch(clearToken())
             navigate('/')
+        }
+        else {
+            if (response.error.status === 401) {
+                dispatch(clearToken())
+                navigate('/')
+            }
         }
     }
     const handleFieldChange = (fieldName, value) => {
@@ -47,12 +59,6 @@ function Profile() {
                 }
             )
             )
-            swal({
-                title: "Успешно!",
-                text: "Вы изменили профиль!",
-                icon: "success",
-                button: "Продолжить",
-              });
         }
         else {
             if (userError && userError.status === 401) {
@@ -61,17 +67,17 @@ function Profile() {
                     text: "Вам следует авторизоваться",
                     icon: "error",
                     button: "Продолжить",
-                  });
+                });
                 dispatch(clearToken())
                 navigate('/')
             }
-            else{
+            else {
                 swal({
                     title: "Ошибка",
                     text: "Проверьте введенные данные",
                     icon: "error",
                     button: "Продолжить",
-                  });
+                });
             }
         }
 

@@ -39,7 +39,7 @@ function CardType(prop) {
                     button: "Продолжить",
                   });
             }
-            if (response.error.status === 400) {
+            else if (response.error.status === 400) {
                 setIsRequired(true)
             }
         }
