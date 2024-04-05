@@ -15,6 +15,7 @@ import AddTeacher from "../../Modals/OtherModalsOfConcreteCourse/AddTeacherModal
 import CreateNotification from "../../Modals/OtherModalsOfConcreteCourse/CreateNotificationModal/CreateNotificationModal"
 import ChangeStatus from "../../Modals/OtherModalsOfConcreteCourse/ChangeStatusModal/ChangeStatusModal"
 import SwalSignUpToACourseContent from "./AtributesOfCourse.jsx/SwalsOfACourse/SwalForSignUpToACourse"
+import SwalGetCourseDataContent from "./AtributesOfCourse.jsx/SwalsOfACourse/SwalForGetCourseData"
 
 function ConcreteCourse() {
 
@@ -76,26 +77,28 @@ function ConcreteCourse() {
     }
 
     useEffect(() => {
-        if (courseData) {
-            console.log(courseData)
-            const userIsTeacher = courseData.teachers.find(obj => obj.email === emailOfUser)
-            if (userIsTeacher !== undefined || role.isAdmin) {
-                setIsTeacherOfCourse(userIsTeacher)
-                setFields({
-                    name: courseData.name,
-                    startYear: courseData.startYear,
-                    maximumStudentsCount: courseData.maximumStudentsCount,
-                    semester: courseData.semester,
-                    requirements: courseData.requirements,
-                    annotations: courseData.annotations,
-                })
-            }
-            else {
-                setIsTeacherOfCourse(undefined)
-            }
+        if (getCourseError) {
+            SwalGetCourseDataContent(getCourseError.status, dispatch, navigate)
         }
         else {
-            console.log(getCourseError)
+            if (courseData) {
+                const userIsTeacher = courseData.teachers.find(obj => obj.email === emailOfUser)
+                if (userIsTeacher !== undefined || role.isAdmin) {
+                    setIsTeacherOfCourse(userIsTeacher)
+                    setFields({
+                        name: courseData.name,
+                        startYear: courseData.startYear,
+                        maximumStudentsCount: courseData.maximumStudentsCount,
+                        semester: courseData.semester,
+                        requirements: courseData.requirements,
+                        annotations: courseData.annotations,
+                    })
+                }
+                else {
+                    setIsTeacherOfCourse(undefined)
+                }
+            }
+
         }
     }, [courseData, getCourseError])
 
@@ -130,7 +133,7 @@ function ConcreteCourse() {
                                             handleClose={() => handleCloseSimple("changeStatus")}
                                         />
                                     </>
-                                ) : (!courseData.students.find(student => student.email === emailOfUser) && courseData.status==="OpenForAssigning") ? (
+                                ) : (!courseData.students.find(student => student.email === emailOfUser) && courseData.status === "OpenForAssigning") ? (
                                     <Button variant="success" className="text-uppercase text-white border-0 mt-2 mb-2" onClick={handleSignUp}>записаться на курс</Button>
                                 ) : null
 
