@@ -50,7 +50,7 @@ export const userApi = createApi({
             })
         }),
         getUserCourses: build.query({
-            query: (token) => ({
+            query: ({token}) => ({
                 url: 'courses/my',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -58,7 +58,7 @@ export const userApi = createApi({
             })
         }),
         getUserTeachingCourses: build.query({
-            query: (token) => ({
+            query: ({token}) => ({
                 url: 'courses/teaching',
                 headers: {
                     Authorization: `Bearer ${token}`,

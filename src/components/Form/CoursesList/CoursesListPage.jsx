@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react"
 import { useGetGroupsQuery } from "../../../api/groupApi"
 import swal from "sweetalert"
 import CreateUpdateCourse from "../../Modals/СreateCourseModal/CreateCourseModal"
+import { useGetUserCoursesQuery, useGetUserTeachingCoursesQuery } from "../../../api/userApi"
 
 function CoursesList() {
     const token = useSelector(selectToken)
@@ -16,6 +17,11 @@ function CoursesList() {
     const [groupName, setGroupName] = useState('')
     const dispatch = useDispatch()
     const navigate = useNavigate()
+
+    const path = window.location.pathname
+    const checkTeaching = /courses\/teaching/
+    const checkMy = /courses\/my/
+
 
     const [fields, setFields] = useState({
         name: '',
@@ -36,12 +42,16 @@ function CoursesList() {
     };
     const handleShow = () => setShow(true);
 
-    const { data: courses, error: coursesError, isError: coursesErrorStatus } = useGetListOfCoursesQuery({ token: token, id: id })
+
+    const { data: courses, error: coursesError, isError: coursesErrorStatus } =
+        checkTeaching.test(path) ? useGetUserTeachingCoursesQuery({ token: token })
+            : checkMy.test(path) ? useGetUserCoursesQuery({ token: token })
+                : useGetListOfCoursesQuery({ token: token, id: id })
+
     const { data: groups, error: groupsError, isError: groupsErrorStatus } = useGetGroupsQuery(token)
 
     useEffect(() => {
         if (courses) {
-            console.log(courses)
         }
         else {
             if (coursesErrorStatus) {
@@ -69,12 +79,12 @@ function CoursesList() {
     }, [courses, coursesErrorStatus])
 
     useEffect(() => {
-        if (groups) {
+        if (groups && id) {
             const group = groups.find(obj => obj.id === id)
             setGroupName(group.name)
         }
         else {
-            if (groupsErrorStatus) {
+            if (groupsErrorStatus && id) {
                 if (groupsError.status === 401) {
                     dispatch(clearToken())
                     navigate('/')
@@ -103,12 +113,12 @@ function CoursesList() {
                 <FormLabel className="fw-bold display-5 h1 pt-3 pb-3" >
                     {groupName}
                 </FormLabel>
-                {role.isAdmin && (
+                {(role.isAdmin && !checkMy.test(path) && !checkTeaching.test(path)) && (
                     <>
                         <div>
                             <Button className="mb-4 text-uppercase" onClick={handleShow}>Создать</Button>
                         </div>
-                        <CreateUpdateCourse show={show} handleClose={handleClose} fields={fields} setFields={setFields} isAdmin={role.isAdmin}/>
+                        <CreateUpdateCourse show={show} handleClose={handleClose} fields={fields} setFields={setFields} isAdmin={role.isAdmin} />
                     </>
 
                 )}

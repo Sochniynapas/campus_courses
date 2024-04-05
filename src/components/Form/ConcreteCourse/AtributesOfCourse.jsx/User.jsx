@@ -48,6 +48,7 @@ const User = (
         console.log(response)
         if (response.error) {
             SwalChangeStudentStatusContent(response.error.status, "", dispatch, navigate)
+            setStudentStatus("")
         }
         else {
 
@@ -83,7 +84,7 @@ const User = (
                 : "d-flex flex-lg-row flex-column justify-content-lg-between border-bottom col-12 p-3"}>
 
                 <div className="d-flex flex-column col-4">
-                    <FormLabel className="m-0">Студент - {student.name}</FormLabel>
+                    <FormLabel className="m-0 text-break">Студент - {student.name}</FormLabel>
                     <FormLabel className="fw-light m-0">
                         Статус -
                         {student.status === "InQueue" && (isTeacher || isAdmin) ? (
@@ -94,16 +95,16 @@ const User = (
                             <FormLabel className="text-danger m-0">отклонён</FormLabel>
                         ) : null}
                     </FormLabel>
-                    <FormLabel className="fw-light m-0">{student.email}</FormLabel>
+                    <FormLabel className="fw-light m-0 text-break">{student.email}</FormLabel>
                 </div>
                 {((isTeacher || isAdmin) || (currentUserEmail === student.email && student.status === "Accepted")) &&
                     <>
                         {student.status === "InQueue" ? (
-                            <div className="col-lg-6 d-flex flex-row justify-content-lg-end  ">
-                                <Button onClick={() => handleClick("Accepted")} className="me-3 col-lg-3">
+                            <div className="col-lg-6 d-flex flex-row justify-content-lg-end align-items-center">
+                                <Button onClick={() => handleClick("Accepted")} className="me-3 col-lg-3 pt-3 pb-3">
                                     Принять
                                 </Button>
-                                <Button onClick={() => handleClick("Declined")} className="text-bg-danger border-0 col-lg-3">
+                                <Button variant="danger" onClick={() => handleClick("Declined")} className="border-0 col-lg-3 pt-3 pb-3">
                                     Отклонить заявку
                                 </Button>
                             </div>
