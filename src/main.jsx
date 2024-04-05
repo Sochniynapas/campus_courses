@@ -44,6 +44,14 @@ const router = createBrowserRouter([
     path: "/courses/:id",
     element: <MainPage  children={ConcreteCourse}/>
   },
+  {
+    path: "/courses/my",
+    element: <MainPage  children={CoursesList}/>
+  },
+  {
+    path: "/courses/teaching",
+    element: <MainPage  children={CoursesList}/>
+  },
 ]);
 ReactDOM.createRoot(document.getElementById('root')).render(
 

@@ -9,10 +9,10 @@ function CourseInList(prop) {
         <Card key={prop.id}>
             <FormGroup className="d-flex flex-column p-2">
                 <FormGroup className="d-flex flex-lg-row flex-column justify-content-between ">
-                    <Link className="fw-bold h4 text-decoration-none" to={`/courses/${prop.id}`}>
+                    <Link className="fw-bold h4 text-decoration-none text-break " to={`/courses/${prop.id}`}>
                         {prop.name}
                     </Link>
-                    <FormLabel className="fw-bold text-success ">
+                    <FormLabel className="fw-bold ps-3 text-success ">
                         <Status status = {prop.status}/>
                     </FormLabel>
                 </FormGroup>

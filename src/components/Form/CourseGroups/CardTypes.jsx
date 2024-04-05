@@ -73,7 +73,7 @@ function CardType(prop) {
                     <>
                         <Link className="col-4 d-flex align-items-center justify-content-start" to={`/groups/${prop.id}`}>{prop.groupName}</Link>
                         <FormGroup className="col-8 d-flex justify-content-lg-end flex-lg-row flex-column align-content-center ">
-                            <Button className="me-3 border-0 bg-warning text-black text-uppercase" onClick={handleShow}>
+                            <Button variant="warning" className="me-3 border-0 text-black text-uppercase" onClick={handleShow}>
                                 Редактировать
                             </Button>
                             <Modal
@@ -101,7 +101,7 @@ function CardType(prop) {
                                     <Button variant="primary" onClick={handleChangeNameOfGroup}>Сохранить</Button>
                                 </Modal.Footer>
                             </Modal>
-                            <Button className="bg-danger border-0 text-uppercase" onClick={handleDeleteGroup}>
+                            <Button variant="danger" className="border-0 text-uppercase" onClick={handleDeleteGroup}>
                                 Удалить
                             </Button>
                         </FormGroup>

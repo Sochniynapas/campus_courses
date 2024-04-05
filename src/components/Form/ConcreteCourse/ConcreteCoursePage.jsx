@@ -103,11 +103,11 @@ function ConcreteCourse() {
         <Container>
             {courseData &&
                 <Form>
-                    <FormLabel className="h1 pb-4 pt-4">{courseData.name}</FormLabel>
+                    <FormLabel className="h1 pb-4 pt-4 text-break ">{courseData.name}</FormLabel>
                     <FormGroup className="d-flex justify-content-between  flex-lg-row flex-column pb-1">
                         <FormLabel className="h3">Основные данный курса</FormLabel>
                         {(isTeacherOfCourse !== undefined || role.isAdmin) &&
-                            <Button className="bg-warning text-uppercase text-black border-0 " onClick={handleShow}>
+                            <Button variant="warning" className="text-uppercase text-black border-0 " onClick={handleShow}>
                                 Редактировать
                             </Button>
                         }
@@ -122,7 +122,7 @@ function ConcreteCourse() {
                             {(isTeacherOfCourse !== undefined || role.isAdmin) ?
                                 (
                                     <>
-                                        <Button onClick={() => handleShowSimple("changeStatus")} className="bg-warning text-uppercase text-black border-0 mt-2 mb-2">
+                                        <Button variant="warning" onClick={() => handleShowSimple("changeStatus")} className="text-uppercase text-black border-0 mt-2 mb-2">
                                             Изменить
                                         </Button>
                                         <ChangeStatus
@@ -130,8 +130,8 @@ function ConcreteCourse() {
                                             handleClose={() => handleCloseSimple("changeStatus")}
                                         />
                                     </>
-                                ) : !courseData.students.find(student => student.email === emailOfUser) ? (
-                                    <Button className="bg-success text-uppercase text-white border-0 mt-2 mb-2" onClick={handleSignUp}>записаться на курс</Button>
+                                ) : (!courseData.students.find(student => student.email === emailOfUser) && courseData.status==="OpenForAssigning") ? (
+                                    <Button variant="success" className="text-uppercase text-white border-0 mt-2 mb-2" onClick={handleSignUp}>записаться на курс</Button>
                                 ) : null
 
                             }

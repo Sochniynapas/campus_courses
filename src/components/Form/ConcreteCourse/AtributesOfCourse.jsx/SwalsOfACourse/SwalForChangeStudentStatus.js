@@ -15,7 +15,7 @@ export default function SwalChangeStudentStatusContent(statusCode, type, dispatc
         case 400:
             swal({
                 title: "Ошибка",
-                text: "Вы уже отправили заявку на рассмотрение",
+                text: "На данном курсе больше нет свободных мест",
                 icon: "error",
                 button: "Продолжить",
             });
