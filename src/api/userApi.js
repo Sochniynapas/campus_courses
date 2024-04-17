@@ -6,6 +6,7 @@ const BASE_URL = 'https://camp-courses.api.kreosoft.space/'
 export const userApi = createApi({
 
     reducerPath: 'userApi',
+    tagTypes: ['Profile'],
     baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
     endpoints: (build) => ({
         registerUser: build.mutation({
@@ -39,7 +40,8 @@ export const userApi = createApi({
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-            })
+            }),
+            invalidatesTags: [{ type: 'Profile', id: 'LIST' }]
         }),
         getUserProfile: build.query({
             query: (token)=>({
@@ -47,7 +49,8 @@ export const userApi = createApi({
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-            })
+            }),
+            providesTags: (result, id) => [{ type: 'Profile', id: 'LIST' }]
         }),
         getUserCourses: build.query({
             query: ({token}) => ({

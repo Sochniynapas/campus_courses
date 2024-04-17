@@ -4,6 +4,7 @@ import { useAuthorizeUserMutation } from "../../../api/userApi";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { handleAuthorization, handleChangeFields } from "./AuthorizationFunctions";
+import { selectToken } from "../../../store/slice/authSlice";
 
 
 function Authorization() {
@@ -18,7 +19,11 @@ function Authorization() {
 
     const [userAuth] = useAuthorizeUserMutation()
 
-    
+    ///useEffect(()=>{
+    ///    if(dispatch(selectToken()) !== null){
+    ///        navigate('/')
+    ///    }
+    ///}, [])
 
     return (
         <Container className="pt-5">
