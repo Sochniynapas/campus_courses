@@ -6,7 +6,7 @@ import { useAddTeacherOnCourseMutation } from "../../../../api/coursesApi"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { selectToken } from "../../../../store/slice/authSlice"
-import SwalAddTeacherContent from "./AddTeacherModalFunctions"
+import { handleAddTeacher, handleClearOption } from "./AddTeacherModalFunctions"
 
 
 
@@ -25,27 +25,7 @@ const AddTeacher = ({ show, handleClose }) => {
     const { id } = useParams()
 
 
-    const handleAddTeacher = async () => {
-        console.log(teacher)
-        const response = await addTeacher({ token: token, body: teacher, id: id })
-        if (response.error) {
-            if (response.error.status === 400) {
-                setIsSelect(true)
-            }
-            SwalAddTeacherContent(response.error.status, handleClose, dispatch, navigate)
-        }
-        else {
-            setIsSelect(false)
-            handleClose()
-            setTeacher({})
-            SwalAddTeacherContent(200, handleClose, dispatch, navigate)
-        }
-    }
 
-    const handleClearOption = () =>{
-        setTeacher({})
-        handleClose()
-    }
 
     return (
         <Modal
@@ -61,16 +41,26 @@ const AddTeacher = ({ show, handleClose }) => {
             </Modal.Header>
             <Modal.Body>
                 <FormLabel>Выберите преподавателя</FormLabel>
-                <Select options={transformedUsers} onChange={(selectedOption) => setTeacher({userId: selectedOption.value})}></Select>
+                <Select options={transformedUsers} onChange={(selectedOption) => setTeacher({ userId: selectedOption.value })}></Select>
                 {isSelect &&
                     <FormLabel className="text-danger">Вам следует выбрать перподавателя, которого нет на данном курсе</FormLabel>
                 }
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={handleClearOption} variant="secondary">
+                <Button onClick={() => handleClearOption(setTeacher, handleClose)} variant="secondary">
                     Отмена
                 </Button>
-                <Button variant="primary" onClick={handleAddTeacher}>Сохранить</Button>
+                <Button variant="primary" onClick={() => handleAddTeacher(
+                    addTeacher,
+                    token,
+                    teacher,
+                    id,
+                    setIsSelect,
+                    handleClose,
+                    dispatch,
+                    navigate,
+                    setTeacher
+                )}>Сохранить</Button>
             </Modal.Footer>
         </Modal>
     )

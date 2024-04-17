@@ -53,3 +53,33 @@ export default function SwalMarkContent(statusCode, handleClose, dispatch, navig
             break
     }
 }
+
+const hanadleEditMark = async(token, markData, editMark, id, studentId, setIsRequired, handleClose, dispatch, navigate, setMarkData,) =>{
+    const response = await editMark({token: token, body: markData, courseId: id, studentId: studentId, })
+    if(response.error){
+        if(response.error.status === 400){
+            setIsRequired(true)
+        }
+        SwalMarkContent(response.error.status, handleClose, dispatch, navigate)
+    }
+    else{
+        setIsRequired(false)
+        setMarkData({})
+        SwalMarkContent(200, handleClose, dispatch, navigate)
+    }
+}
+const handleChooseMark=(value, type, setMarkData)=>{
+    if(type === "Промежуточной аттестации"){
+        setMarkData({markType: "Midterm", mark: value})
+    }
+    else{
+        setMarkData({markType: "Final", mark: value})
+    }
+}
+const handleDefaultChecked = (value, markData)=>{
+    if(value === markData.mark){
+        return true
+    }
+}
+
+export {hanadleEditMark, handleChooseMark, handleDefaultChecked}
