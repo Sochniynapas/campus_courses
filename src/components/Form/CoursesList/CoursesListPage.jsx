@@ -9,6 +9,7 @@ import { useGetGroupsQuery } from "../../../api/groupApi"
 import swal from "sweetalert"
 import CreateUpdateCourse from "../../Modals/СreateCourseModal/CreateCourseModal"
 import { useGetUserCoursesQuery, useGetUserTeachingCoursesQuery } from "../../../api/userApi"
+import SwalsForCoursesLoading from "./Swals/SwalsForCoursesLoading"
 
 function CoursesList() {
     const token = useSelector(selectToken)
@@ -43,7 +44,7 @@ function CoursesList() {
     const handleShow = () => setShow(true);
 
 
-    const { data: courses, error: coursesError, isError: coursesErrorStatus } =
+    const { data: courses, error: coursesError, isError: coursesErrorStatus, isLoading } =
         checkTeaching.test(path) ? useGetUserTeachingCoursesQuery({ token: token })
             : checkMy.test(path) ? useGetUserCoursesQuery({ token: token })
                 : useGetListOfCoursesQuery({ token: token, id: id })
@@ -51,29 +52,12 @@ function CoursesList() {
     const { data: groups, error: groupsError, isError: groupsErrorStatus } = useGetGroupsQuery(token)
 
     useEffect(() => {
+        console.log(isLoading)
         if (courses) {
         }
         else {
             if (coursesErrorStatus) {
-                if (coursesError.status === 401) {
-                    dispatch(clearToken())
-                    navigate('/')
-                    swal({
-                        title: "Ошибка",
-                        text: "Вам следует авторизоваться",
-                        icon: "error",
-                        button: "Продолжить",
-                    });
-                }
-                else if (coursesError.status === 404) {
-                    navigate('/')
-                    swal({
-                        title: "Ошибка",
-                        text: "Данной группы не существует",
-                        icon: "error",
-                        button: "Продолжить",
-                    });
-                }
+                SwalsForCoursesLoading(coursesError.status, dispatch, navigate)
             }
         }
     }, [courses, coursesErrorStatus])
@@ -85,24 +69,7 @@ function CoursesList() {
         }
         else {
             if (groupsErrorStatus && id) {
-                if (groupsError.status === 401) {
-                    dispatch(clearToken())
-                    navigate('/')
-                    swal({
-                        title: "Ошибка",
-                        text: "Вам следует авторизоваться",
-                        icon: "error",
-                        button: "Продолжить",
-                    });
-                }
-                else {
-                    swal({
-                        title: "Ошибка",
-                        text: "Произошла непредвиденная ошибка",
-                        icon: "error",
-                        button: "Продолжить",
-                    });
-                }
+                SwalsForCoursesLoading(groupsError.status, dispatch, navigate)
             }
         }
     }, [groups, groupsErrorStatus])

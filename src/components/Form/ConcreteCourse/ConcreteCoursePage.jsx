@@ -16,6 +16,7 @@ import CreateNotification from "../../Modals/OtherModalsOfConcreteCourse/CreateN
 import ChangeStatus from "../../Modals/OtherModalsOfConcreteCourse/ChangeStatusModal/ChangeStatusModal"
 import SwalSignUpToACourseContent from "./AtributesOfCourse.jsx/SwalsOfACourse/SwalForSignUpToACourse"
 import SwalGetCourseDataContent from "./AtributesOfCourse.jsx/SwalsOfACourse/SwalForGetCourseData"
+import { handleCloseSimple, handleShowSimple, handleSignUp, setCourseFields } from "./AtributesOfCourse.jsx/ConcreteCourseFunctions/CourseFunctions"
 
 function ConcreteCourse() {
 
@@ -26,7 +27,7 @@ function ConcreteCourse() {
 
     const [isTeacherOfCourse, setIsTeacherOfCourse] = useState({})
     const [signUpToACourse] = useSignUpForACourseMutation()
-    const { data: courseData, error: getCourseError } = useGetCoursePageQuery({ token, id })
+    const { data: courseData, error: getCourseError, isLoading } = useGetCoursePageQuery({ token, id })
 
     const [fields, setFields] = useState({
         name: '',
@@ -37,13 +38,6 @@ function ConcreteCourse() {
         annotations: '',
         mainTeacherId: ''
     });
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false)
-    const handleShow = () => setShow(true);
-
     const [showSimpleModal, setShowSimpleModal] = useState({
         addTeacher: false,
         changeMiddleResult: false,
@@ -51,30 +45,15 @@ function ConcreteCourse() {
         changeStatus: false,
         createNotification: false
     })
-    const handleCloseSimple = (type) => {
-        setShowSimpleModal(prevValues => ({
-            ...prevValues,
-            [type]: false
-        }))
-    }
-    const handleShowSimple = (type) => {
-        setShowSimpleModal(prevValues => ({
-            ...prevValues,
-            [type]: true
-        }))
-    }
 
-    const handleSignUp = async () => {
-        const response = await signUpToACourse({ token: token, id: id })
-        if (response.error) {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
-            SwalSignUpToACourseContent(response.error.status, dispatch, navigate)
-        }
-        else {
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false)
+    const handleShow = () => setShow(true);
 
-            SwalSignUpToACourseContent(200, dispatch, navigate)
-        }
-    }
+
 
     useEffect(() => {
         if (getCourseError) {
@@ -82,21 +61,8 @@ function ConcreteCourse() {
         }
         else {
             if (courseData) {
-                const userIsTeacher = courseData.teachers.find(obj => obj.email === emailOfUser)
-                if (userIsTeacher !== undefined || role.isAdmin) {
-                    setIsTeacherOfCourse(userIsTeacher)
-                    setFields({
-                        name: courseData.name,
-                        startYear: courseData.startYear,
-                        maximumStudentsCount: courseData.maximumStudentsCount,
-                        semester: courseData.semester,
-                        requirements: courseData.requirements,
-                        annotations: courseData.annotations,
-                    })
-                }
-                else {
-                    setIsTeacherOfCourse(undefined)
-                }
+                console.log(courseData)
+                setCourseFields(setIsTeacherOfCourse, setFields, courseData, emailOfUser, role)
             }
 
         }
@@ -125,16 +91,18 @@ function ConcreteCourse() {
                             {(isTeacherOfCourse !== undefined || role.isAdmin) ?
                                 (
                                     <>
-                                        <Button variant="warning" onClick={() => handleShowSimple("changeStatus")} className="text-uppercase text-black border-0 mt-2 mb-2">
+                                        <Button variant="warning" onClick={() => handleShowSimple("changeStatus", setShowSimpleModal)} className="text-uppercase text-black border-0 mt-2 mb-2">
                                             Изменить
                                         </Button>
                                         <ChangeStatus
                                             show={showSimpleModal.changeStatus}
-                                            handleClose={() => handleCloseSimple("changeStatus")}
+                                            handleClose={() => handleCloseSimple("changeStatus", setShowSimpleModal)}
                                         />
                                     </>
                                 ) : (!courseData.students.find(student => student.email === emailOfUser) && courseData.status === "OpenForAssigning") ? (
-                                    <Button variant="success" className="text-uppercase text-white border-0 mt-2 mb-2" onClick={handleSignUp}>записаться на курс</Button>
+                                    <Button variant="success" className="text-uppercase text-white border-0 mt-2 mb-2" onClick={()=>handleSignUp(signUpToACourse, dispatch, navigate, token, id)}>
+                                        записаться на курс
+                                    </Button>
                                 ) : null
 
                             }
@@ -182,12 +150,12 @@ function ConcreteCourse() {
                                 <TabContent key={id} className="d-flex flex-column">
                                     {(role.isAdmin || isTeacherOfCourse) &&
                                         <div className="pb-4">
-                                            <Button onClick={() => handleShowSimple("createNotification")}>
+                                            <Button onClick={() => handleShowSimple("createNotification", setShowSimpleModal)}>
                                                 Создать уведомление
                                             </Button>
                                             <CreateNotification
                                                 show={showSimpleModal.createNotification}
-                                                handleClose={() => handleCloseSimple("createNotification")}
+                                                handleClose={() => handleCloseSimple("createNotification", setShowSimpleModal)}
                                             />
                                         </div>
                                     }
@@ -214,10 +182,10 @@ function ConcreteCourse() {
                                 <TabContent>
                                     {(role.isAdmin || courseData.teachers.find(teacher => teacher.email === emailOfUser)) &&
                                         <>
-                                            <Button className="mb-4" onClick={() => handleShowSimple("addTeacher")}>Добавить преподавателя</Button>
+                                            <Button className="mb-4" onClick={() => handleShowSimple("addTeacher", setShowSimpleModal)}>Добавить преподавателя</Button>
                                             <AddTeacher
                                                 show={showSimpleModal.addTeacher}
-                                                handleClose={() => handleCloseSimple("addTeacher")}
+                                                handleClose={() => handleCloseSimple("addTeacher", setShowSimpleModal)}
                                             />
                                         </>
                                     }
@@ -243,9 +211,6 @@ function ConcreteCourse() {
                                             isTeacher={isTeacherOfCourse !== undefined}
                                             isAdmin={role.isAdmin}
                                             currentUserEmail={emailOfUser}
-                                            showSimpleModal={showSimpleModal}
-                                            handleCloseSimple={handleCloseSimple}
-                                            handleShowSimple={handleShowSimple}
                                         />
                                     ))}
                                 </TabContent>

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearToken, selectRoles, selectToken } from "../../../store/slice/authSlice";
 import { useEffect, useState } from "react";
 import CardType from "./CardTypes";
+import handleCreateNewGroup from "./CourseGroupsFunctions/CourseGroupsPageFunctions";
 
 
 function CourseGroups() {
@@ -15,7 +16,7 @@ function CourseGroups() {
 
     const [isRequired, setIsRequired] = useState('false')
     const [name, setName] = useState('')
-    
+
     const [show, setShow] = useState(false);
     const handleClose = () => {
         setShow(false)
@@ -29,35 +30,7 @@ function CourseGroups() {
     const handleSetNewValue = (value) => {
         setName(value);
     }
-    const handleCreateNewGroup = async() => {
-        const response = await createGroup({token: token, name: name})
-        if(response.error){
-            if(response.error.status === 401){
-                dispatch(clearToken())
-                handleClose()
-                swal({
-                    title: "Ошибка",
-                    text: "Вам следует авторизоваться",
-                    icon: "error",
-                    button: "Продолжить",
-                  });
-            }
-            if(response.error.status === 400){
-                setIsRequired(true)
-            }
-        }
-        else{
-            handleClose()
-            setIsRequired(false)
-            setName('')
-            swal({
-                title: "Успешно!",
-                text: "Вы создали группу!",
-                icon: "success",
-                button: "Продолжить",
-              });
-        }
-    }
+
 
 
     useEffect(() => {
@@ -108,7 +81,9 @@ function CourseGroups() {
                         <Button variant="secondary" onClick={handleClose}>
                             Отмена
                         </Button>
-                        <Button variant="primary" onClick={handleCreateNewGroup}>Сохранить</Button>
+                        <Button variant="primary" onClick={() => handleCreateNewGroup(createGroup, dispatch, navigate, name, token, handleClose, setIsRequired, setName)}>
+                            Сохранить
+                        </Button>
                     </Modal.Footer>
                 </Modal>
             </FormGroup>
