@@ -53,3 +53,20 @@ export default function SwalStatusContent(statusCode, handleClose, dispatch, nav
             break
     }
 }
+
+const handleEditStatus = async(editStatus, token, status, id, setRequired, setStatus, handleClose, dispatch, navigate)=>{
+    const response = await editStatus({token: token, body: {status}, id: id})
+    if(response.error){
+        if(response.error.status === 400){
+            setRequired(true)
+        }
+        SwalStatusContent(response.error.status, handleClose, dispatch, navigate)
+    }
+    else{
+        setRequired(false)
+        setStatus("")
+        SwalStatusContent(200, handleClose, dispatch, navigate)
+    }
+}
+
+export {handleEditStatus}

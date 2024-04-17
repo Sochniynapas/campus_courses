@@ -4,35 +4,21 @@ import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { selectToken } from "../../../../store/slice/authSlice"
-import SwalStatusContent from "./ChangeStatusModalFunctions"
+import SwalStatusContent, { handleEditStatus } from "./ChangeStatusModalFunctions"
 
 
 
-const ChangeStatus = ({show, handleClose}) => {
+const ChangeStatus = ({ show, handleClose }) => {
     const [editStatus] = useEditCoursesStatusMutation()
     const [status, setStatus] = useState("")
     const [required, setRequired] = useState(false)
 
-    const {id} = useParams()
+    const { id } = useParams()
     const token = useSelector(selectToken)
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    const handleEditStatus = async()=>{
-        const response = await editStatus({token: token, body: {status}, id: id})
-        if(response.error){
-            if(response.error.status === 400){
-                setRequired(true)
-            }
-            SwalStatusContent(response.error.status, handleClose, dispatch, navigate)
-        }
-        else{
-            setRequired(false)
-            setStatus("")
-            handleClose()
-            SwalStatusContent(200, handleClose, dispatch, navigate)
-        }
-    }
+
     return (
         <Modal
             show={show}
@@ -87,7 +73,15 @@ const ChangeStatus = ({show, handleClose}) => {
                 <Button onClick={handleClose} variant="secondary">
                     Отмена
                 </Button>
-                <Button variant="primary" onClick={handleEditStatus}>Сохранить</Button>
+                <Button variant="primary" onClick={() => handleEditStatus(
+                    editStatus,
+                    token, status,
+                    id, setRequired,
+                    setStatus,
+                    handleClose,
+                    dispatch,
+                    navigate
+                )}>Сохранить</Button>
             </Modal.Footer>
         </Modal>
     )
