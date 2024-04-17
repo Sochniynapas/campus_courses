@@ -52,3 +52,54 @@ export function SwalContent(statusCode, text, handleClose, dispatch, navigate) {
             break
     }
 }
+
+const handleFieldChange = (fieldName, value, setFields) => {
+    setFields(prevFields => ({
+        ...prevFields,
+        [fieldName]: value
+    }))
+
+}
+const handleAutoPickSemester = (type, fields) => {
+    if (fields.semester === type) {
+        return true
+    }
+    else {
+        return false
+    }
+}
+
+const handleCUCourse = async (isCourseWindow, locate, isAdmin, updateCourse, updateReqAndAnnot, createCourse, handleClose, navigate, dispatch, token, id, fields, ) => {
+
+    if (isCourseWindow.test(locate)) {
+        if (isAdmin) {
+            const response = await updateCourse({ token: token, body: fields, id: id })
+            if (response.data) {
+                console.log(response)
+                SwalContent(200, "Вы успешно изменили курс!", handleClose, navigate)
+            }
+            else {
+                SwalContent(response.error.status, handleClose, dispatch, navigate)
+            }
+        }
+        else {
+            const response = await updateReqAndAnnot({ token: token, id: id, data: { requirements: fields.requirements, annotations: fields.annotations } })
+            if (response.data) {
+                SwalContent(200, "Вы успешно изменили курс!", handleClose, navigate)
+            }
+            else {
+                SwalContent(response.error.status, handleClose, dispatch, navigate)
+            }
+        }
+    }
+    else {
+        const response = await createCourse({ token: token, body: fields, id: id })
+        if (response.data) {
+            SwalContent(200,"Вы успешно создали курс!", handleClose, navigate)
+        }
+        else {
+            SwalContent(response.error.status, handleClose, dispatch, navigate)
+        }
+    }
+}
+export {handleCUCourse, handleAutoPickSemester, handleFieldChange}
