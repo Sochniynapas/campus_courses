@@ -1,20 +1,25 @@
 
 import { Button, Card, Form, FormControl, FormGroup, FormLabel, Modal } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux";
-import { clearToken, selectToken } from "../../../store/slice/authSlice";
+import { useDispatch } from "react-redux";
 import { useDeleteGroupMutation, usePutGroupNameMutation } from "../../../api/groupApi";
 import { useState } from "react";
+import { handleChangeNameOfGroup, handleDeleteGroup } from "./CourseGroupsFunctions/CardTypesFunctions";
+import DeleteGroupModal from "../../Modals/OtherModalsOfConcreteCourse/ModalForDeleteGroup";
 
 function CardType(prop) {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const [showDelete, setDeleteShow] = useState(false);
+    const handleCloseDelete = () => setDeleteShow(false);
+    const handleShowDelete = () => setDeleteShow(true);
 
     const [isRequired, setIsRequired] = useState('false')
     const [name, setName] = useState(prop.groupName)
@@ -26,53 +31,19 @@ function CardType(prop) {
     }
 
 
-    const handleChangeNameOfGroup = async () => {
-        const response = await editGroupName({ body: { name: name }, token: token, id: prop.id })
-        if (response.error) {
-            if (response.error.status === 401) {
-                dispatch(clearToken())
-                navigate("/")
-                swal({
-                    title: "Ошибка",
-                    text: "Вам следует авторизоваться",
-                    icon: "error",
-                    button: "Продолжить",
-                  });
-            }
-            else if (response.error.status === 400) {
-                setIsRequired(true)
-            }
-        }
-        else {
-            handleClose()
-            setIsRequired(false)
-            swal({
-                title: "Успешно!",
-                text: "Вы отредактировали группу!",
-                icon: "success",
-                button: "Продолжить",
-              });
-        }
-    }
+
     const [deleteGroup] = useDeleteGroupMutation()
-    const handleDeleteGroup = async () => {
-        const response = await deleteGroup({ token: token, id: prop.id })
-        if (!response.data) {
-            console.log(response)
-            if (response.error.status === 401) {
-                dispatch(clearToken())
-            }
-            navigate("/")
-        }
-    }
+
 
     return (
         <Card key={prop.id} className="p-3">
             <Form className="d-flex justify-content-between flex-lg-row flex-column">
                 {prop.isAdmin ? (
                     <>
-                        <Link className="col-4 d-flex align-items-center justify-content-start" to={`/groups/${prop.id}`}>{prop.groupName}</Link>
-                        <FormGroup className="col-8 d-flex justify-content-lg-end flex-lg-row flex-column align-content-center ">
+                        <Link className={prop.groupName.length > 45 ? "col-6 d-flex align-items-center justify-content-start overflow-auto "
+                            : "col-4 d-flex align-items-center justify-content-start"
+                        } to={`/groups/${prop.id}`}>{prop.groupName}</Link>
+                        <FormGroup className="col-6 d-flex justify-content-lg-end flex-lg-row flex-column align-content-center ">
                             <Button variant="warning" className="me-3 border-0 text-black text-uppercase" onClick={handleShow}>
                                 Редактировать
                             </Button>
@@ -98,12 +69,15 @@ function CardType(prop) {
                                     <Button variant="secondary" onClick={handleClose}>
                                         Отмена
                                     </Button>
-                                    <Button variant="primary" onClick={handleChangeNameOfGroup}>Сохранить</Button>
+                                    <Button variant="primary" onClick={() => handleChangeNameOfGroup(editGroupName, dispatch, navigate, setIsRequired, name, token, prop, handleClose)}>
+                                        Сохранить
+                                    </Button>
                                 </Modal.Footer>
                             </Modal>
-                            <Button variant="danger" className="border-0 text-uppercase" onClick={handleDeleteGroup}>
+                            <Button variant="danger" className="border-0 text-uppercase" onClick={handleShowDelete}>
                                 Удалить
                             </Button>
+                            <DeleteGroupModal show={showDelete} handleClose={handleCloseDelete} deleteGroup={deleteGroup} navigate={navigate} token={token} prop={prop}/>
                         </FormGroup>
                     </>
                 ) : (

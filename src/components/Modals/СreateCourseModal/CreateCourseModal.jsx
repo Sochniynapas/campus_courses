@@ -2,16 +2,15 @@ import { Button, FormCheck, FormControl, FormGroup, FormLabel, Modal } from "rea
 import CourseTextEditor from "../../TextEditors/CourseTextEditor"
 import Select from "react-select"
 import { useDispatch, useSelector } from "react-redux"
-import { selectToken } from "../../../store/slice/authSlice"
 import { useCreateCourseMutation, useEditCourseMutation, useEditCoursesAnnotationsAndRequirementsMutation } from "../../../api/coursesApi"
 import { useNavigate, useParams } from "react-router-dom"
-import { SwalContent } from "./CreateUpdateModalFunctions"
+import { SwalContent, handleAutoPickSemester, handleCUCourse, handleFieldChange } from "./CreateUpdateModalFunctions"
 import { useGetTransformedUsers } from "../../../hooks/useGetTransformedUsers"
 
 
 function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
 
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const transformedUsers = useGetTransformedUsers()
 
     const { id } = useParams()
@@ -29,54 +28,6 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
     const isCourseWindow = /courses/
 
 
-    const handleFieldChange = (fieldName, value) => {
-        setFields(prevFields => ({
-            ...prevFields,
-            [fieldName]: value
-        }))
-
-    }
-    const handleAutoPickSemester = (type) => {
-        if (fields.semester === type) {
-            return true
-        }
-        else {
-            return false
-        }
-    }
-    const handleCUCourse = async () => {
-
-        if (isCourseWindow.test(locate)) {
-            if (isAdmin) {
-                const response = await updateCourse({ token: token, body: fields, id: id })
-                if (response.data) {
-                    console.log(response)
-                    SwalContent(200, "Вы успешно изменили курс!", handleClose, navigate)
-                }
-                else {
-                    SwalContent(response.error.status, handleClose, dispatch, navigate)
-                }
-            }
-            else {
-                const response = await updateReqAndAnnot({ token: token, id: id, data: { requirements: fields.requirements, annotations: fields.annotations } })
-                if (response.data) {
-                    SwalContent(200, "Вы успешно изменили курс!", handleClose, navigate)
-                }
-                else {
-                    SwalContent(response.error.status, handleClose, dispatch, navigate)
-                }
-            }
-        }
-        else {
-            const response = await createCourse({ token: token, body: fields, id: id })
-            if (response.data) {
-                SwalContent(200,"Вы успешно создали курс!", handleClose, navigate)
-            }
-            else {
-                SwalContent(response.error.status, handleClose, dispatch, navigate)
-            }
-        }
-    }
 
 
     return (
@@ -101,21 +52,21 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
                         <>
                             <FormGroup className="pb-4">
                                 <FormLabel>Название курса</FormLabel>
-                                <FormControl type={'text'} value={fields.name} onChange={(e) => (handleFieldChange('name', e.target.value))}></FormControl>
+                                <FormControl type={'text'} value={fields.name} onChange={(e) => (handleFieldChange('name', e.target.value, setFields))}></FormControl>
                                 {!fields.name &&
                                     <FormLabel className="text-danger">Поле названия не должно быть пустым</FormLabel>
                                 }
                             </FormGroup>
                             <FormGroup className="pb-4">
                                 <FormLabel>Год начала курса</FormLabel>
-                                <FormControl type={'text'} value={fields.startYear} onChange={(e) => (handleFieldChange('startYear', e.target.value))}></FormControl>
+                                <FormControl type={'text'} value={fields.startYear} onChange={(e) => (handleFieldChange('startYear', e.target.value, setFields))}></FormControl>
                                 {!dateValid.test(fields.startYear) &&
                                     <FormLabel className="text-danger">Значение поля не должно быть пустым, и год находится между 2000 и 2029 включительно</FormLabel>
                                 }
                             </FormGroup>
                             <FormGroup className="pb-4">
                                 <FormLabel>Общее количество мест</FormLabel>
-                                <FormControl type={'text'} value={fields.maximumStudentsCount} onChange={(e) => (handleFieldChange('maximumStudentsCount', e.target.value))}></FormControl>
+                                <FormControl type={'text'} value={fields.maximumStudentsCount} onChange={(e) => (handleFieldChange('maximumStudentsCount', e.target.value, setFields))}></FormControl>
                                 {!countValid.test(fields.maximumStudentsCount) &&
                                     <FormLabel className="text-danger">Значение поля не должно быть пустым, и максимальное количество мест находится между 1 и 200</FormLabel>
                                 }
@@ -128,9 +79,9 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
                                     name="group1"
                                     type={'radio'}
                                     id={`inline-${'radio'}-1`}
-                                    defaultChecked={handleAutoPickSemester("Autumn")}
+                                    defaultChecked={handleAutoPickSemester("Autumn", fields)}
                                     onClick={() => {
-                                        handleFieldChange('semester', 'Autumn')
+                                        handleFieldChange('semester', 'Autumn', setFields)
                                     }}
 
                                 />
@@ -140,9 +91,9 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
                                     name="group1"
                                     type={'radio'}
                                     id={`inline-${'radio'}-2`}
-                                    defaultChecked={handleAutoPickSemester("Spring")}
+                                    defaultChecked={handleAutoPickSemester("Spring", fields)}
                                     onClick={() => {
-                                        handleFieldChange('semester', 'Spring')
+                                        handleFieldChange('semester', 'Spring', setFields)
                                     }}
                                 />
                             </FormGroup>
@@ -156,14 +107,14 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
                     }
                     <FormGroup className="pb-4">
                         <FormLabel>Требования</FormLabel>
-                        <CourseTextEditor defaultValue={fields.requirements} setValue={handleFieldChange} type={"requirements"} />
+                        <CourseTextEditor defaultValue={fields.requirements} setValue={handleFieldChange} type={"requirements"} setFields={setFields}/>
                         {!fields.requirements &&
                             <FormLabel className="text-danger">Поле не должно оставаться нетронутым</FormLabel>
                         }
                     </FormGroup>
                     <FormGroup className="pb-4">
                         <FormLabel>Аннотации</FormLabel>
-                        <CourseTextEditor defaultValue={fields.annotations} setValue={handleFieldChange} type={"annotations"} />
+                        <CourseTextEditor defaultValue={fields.annotations} setValue={handleFieldChange} type={"annotations"} setFields={setFields}/>
                         {!fields.annotations &&
                             <FormLabel className="text-danger">Поле не должно оставаться нетронутым</FormLabel>
                         }
@@ -172,7 +123,7 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
                         <>
                             <FormLabel>Основной преподаватель курса</FormLabel>
                             {transformedUsers &&
-                                <Select options={transformedUsers} onChange={(selectedOption) => handleFieldChange('mainTeacherId', selectedOption.value)}></Select>
+                                <Select options={transformedUsers} onChange={(selectedOption) => handleFieldChange('mainTeacherId', selectedOption.value, setFields)}></Select>
                             }
                             {(!fields.mainTeacherId && !isCourseWindow.test(locate)) &&
                                 <FormLabel className="text-danger">Выберите основного преподавателя</FormLabel>
@@ -186,7 +137,22 @@ function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
                     <Button variant="secondary" onClick={handleClose}>
                         Отмена
                     </Button>
-                    <Button variant="primary" onClick={handleCUCourse}>Сохранить</Button>
+                    <Button variant="primary" onClick={() =>
+                        handleCUCourse(
+                            isCourseWindow,
+                            locate,
+                            isAdmin,
+                            updateCourse,
+                            updateReqAndAnnot,
+                            createCourse,
+                            handleClose,
+                            navigate,
+                            dispatch,
+                            token,
+                            id,
+                            fields
+                        )}>Сохранить
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </>

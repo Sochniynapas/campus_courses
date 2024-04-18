@@ -1,26 +1,8 @@
-
 import swal from 'sweetalert'
-export default function SwalChangeStudentStatusContent(statusCode, type, dispatch, navigate) {
+export default function SwalDeleteCourse(statusCode, navigate) {
 
     switch (statusCode) {
-        case 200:
-            swal({
-                title: "Успешно!",
-                text: `Вы успешно ${type} заявку`,
-                icon: "success",
-                button: "Продолжить"
-            })
-            break
-        case 400:
-            swal({
-                title: "Ошибка",
-                text: "На данном курсе больше нет свободных мест",
-                icon: "error",
-                button: "Продолжить",
-            });
-            break
         case 401:
-
             localStorage.clear()
             navigate("/")
             swal({
@@ -30,12 +12,22 @@ export default function SwalChangeStudentStatusContent(statusCode, type, dispatc
                 button: "Продолжить",
             });
             break
+        case 403:
+
+            navigate("/")
+            swal({
+                title: "Ошибка",
+                text: "У вас нет прав для удаления курса",
+                icon: "error",
+                button: "Продолжить",
+            });
+            break
         case 404:
 
             navigate("/")
             swal({
                 title: "Ошибка",
-                text: "Не удалось ничего найти по данному запросу",
+                text: "Данного курса не существует",
                 icon: "error",
                 button: "Продолжить",
             });

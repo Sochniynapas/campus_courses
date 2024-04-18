@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button, Container, Form, FormControl, FormGroup, FormLabel, Nav } from "react-bootstrap";
-import { useAuthorizeUserMutation, useGetUserRolesQuery } from "../../../api/userApi";
+import { useAuthorizeUserMutation } from "../../../api/userApi";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import { setLogin, setRoles, setToken } from "../../../store/slice/authSlice";
-import swal from "sweetalert";
+import { handleAuthorization, handleChangeFields } from "./AuthorizationFunctions";
+import { selectToken } from "../../../store/slice/authSlice";
 
 
 function Authorization() {
@@ -19,43 +19,11 @@ function Authorization() {
 
     const [userAuth] = useAuthorizeUserMutation()
 
-    const handleChangeFields = (fieldName, value) => {
-        setAuthFields(prevFields => ({
-            ...prevFields,
-            [fieldName]: value
-        }))
-    }
-
-    const handleAuthorization = async () => {
-        try {
-            const response = await userAuth(authFields)
-            if (response.data) {
-                console.log(response)
-                dispatch(setToken(response.data.token))
-                dispatch(setLogin(authFields.email))
-                navigate('/')
-                swal({
-                    title: "Успешно!",
-                    text: "Вы авторизовались!",
-                    icon: "success",
-                    button: "Продолжить",
-                  });
-            }
-            else {
-                swal({
-                    title: "Ошибка",
-                    text: "Вы ввели неверный логин или пароль",
-                    icon: "error",
-                    button: "Продолжить",
-                  });
-                setFail(true)
-                throw new Error(response.error.status)
-            }
-        }
-        catch (error) {
-            console.log(error)
-        }
-    }
+    ///useEffect(()=>{
+    ///    if(dispatch(selectToken()) !== null){
+    ///        navigate('/')
+    ///    }
+    ///}, [])
 
     return (
         <Container className="pt-5">
@@ -68,7 +36,7 @@ function Authorization() {
                     <FormControl
                         type="text"
                         value={authFields.email}
-                        onChange={(e) => handleChangeFields('email', e.target.value)}
+                        onChange={(e) => handleChangeFields('email', e.target.value, setAuthFields)}
                     />
                 </FormGroup>
 
@@ -77,7 +45,7 @@ function Authorization() {
                     <FormControl
                         type='password'
                         value={authFields.password}
-                        onChange={(e) => handleChangeFields('password', e.target.value)}
+                        onChange={(e) => handleChangeFields('password', e.target.value, setAuthFields)}
                     />
 
                 </FormGroup>
@@ -88,7 +56,7 @@ function Authorization() {
                 ) : (
                     null
                 )}
-                <Button onClick={handleAuthorization}>
+                <Button onClick={() => handleAuthorization(dispatch, setFail, navigate, userAuth, authFields)}>
                     Войти
                 </Button>
             </Form>

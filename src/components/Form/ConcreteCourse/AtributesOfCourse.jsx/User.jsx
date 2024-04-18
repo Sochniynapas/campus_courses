@@ -3,9 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import ChangeResult from "../../../Modals/OtherModalsOfConcreteCourse/ChangeResultModal/ChangeResultModal"
 import { useChangeUserStatusMutation } from "../../../../api/coursesApi"
-import SwalChangeStudentStatusContent from "./SwalsOfACourse/SwalForChangeStudentStatus"
 import { useDispatch, useSelector } from "react-redux"
-import { selectToken } from "../../../../store/slice/authSlice"
+import { handleClick, handleClose, handleEditStudentStatus, handleShow } from "./ConcreteCourseFunctions/UserFunctions"
 
 
 const User = (
@@ -20,7 +19,7 @@ const User = (
     const [editStudentStatus] = useChangeUserStatusMutation()
 
     const { id } = useParams()
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
@@ -29,54 +28,15 @@ const User = (
         middleResult: false,
         finalResult: false
     })
-    const handleShow = (type) => {
-        setWhichResult(prevFields => ({
-            ...prevFields,
-            [type]: true
-        }))
-    }
-
-    const handleClose = (type) => {
-        setWhichResult(prevFields => ({
-            ...prevFields,
-            [type]: false
-        }))
-    }
-
-    const handleEditStudentStatus = async () => {
-        const response = await editStudentStatus({ token: token, body: { status: studentStatus }, courseId: id, studentId: student.id })
-        console.log(response)
-        if (response.error) {
-            SwalChangeStudentStatusContent(response.error.status, "", dispatch, navigate)
-            setStudentStatus("")
-        }
-        else {
-
-            if (studentStatus === "Declined") {
-                SwalChangeStudentStatusContent(200, "отклонили", dispatch, navigate)
-                setStudentStatus("")
-            }
-            else {
-                SwalChangeStudentStatusContent(200, "приняли", dispatch, navigate)
-                setStudentStatus("")
-            }
-        }
-    }
+    
 
     useEffect(() => {
         if (studentStatus !== "") {
-            handleEditStudentStatus()
+            handleEditStudentStatus(editStudentStatus, token, studentStatus, id, student, dispatch, navigate, setStudentStatus)
         }
     }, [studentStatus])
 
-    const handleClick = (status) => {
-        if (status === "Declined") {
-            setStudentStatus("Declined")
-        }
-        else {
-            setStudentStatus("Accepted")
-        }
-    }
+    
     return (
         <>
 
@@ -101,19 +61,23 @@ const User = (
                     <>
                         {student.status === "InQueue" ? (
                             <div className="col-lg-6 d-flex flex-row justify-content-lg-end align-items-center">
-                                <Button onClick={() => handleClick("Accepted")} className="me-3 col-lg-3 pt-3 pb-3">
+                                <Button onClick={() => handleClick("Accepted", setStudentStatus)} className=" me-3 pt-3 pb-3">
                                     Принять
                                 </Button>
-                                <Button variant="danger" onClick={() => handleClick("Declined")} className="border-0 col-lg-3 pt-3 pb-3">
+
+
+                                <Button variant="danger" onClick={() => handleClick("Declined", setStudentStatus)} className=" border-0 pt-3 pb-3">
                                     Отклонить заявку
                                 </Button>
+
+
                             </div>
                         ) : (
                             <>
                                 {student.status !== "Declined" &&
                                     <>
                                         <div className="col-4">
-                                            <Link onClick={() => handleShow("middleResult")} className="m-0">Промежуточная аттестация </Link>
+                                            <Link onClick={() => handleShow("middleResult", setWhichResult)} className="m-0">Промежуточная аттестация </Link>
                                             <span> - </span>
                                             {student.midtermResult === "NotDefined" || student.midtermResult === null ? (
                                                 <FormLabel className="text-bg-secondary p-1 rounded-3 m-0 text-lowercase ">отметки нет</FormLabel>
@@ -125,7 +89,7 @@ const User = (
 
                                         </div>
                                         <div className="col-4">
-                                            <Link onClick={() => handleShow("finalResult")} className="m-0">Промежуточная аттестация </Link>
+                                            <Link onClick={() => handleShow("finalResult", setWhichResult)} className="m-0">Промежуточная аттестация </Link>
                                             <span> - </span>
                                             {student.finalResult === "NotDefined" || student.finalResult === null ? (
                                                 <FormLabel className="text-bg-secondary p-1 rounded-3 m-0 text-lowercase ">отметки нет</FormLabel>
@@ -137,14 +101,14 @@ const User = (
                                         </div>
                                         <ChangeResult
                                             show={whichResult.middleResult}
-                                            handleClose={() => handleClose("middleResult")}
+                                            handleClose={() => handleClose("middleResult", setWhichResult)}
                                             type={"Промежуточной аттестации"}
                                             name={student.name}
                                             studentId={student.id}
                                         />
                                         <ChangeResult
                                             show={whichResult.finalResult}
-                                            handleClose={() => handleClose("finalResult")}
+                                            handleClose={() => handleClose("finalResult", setWhichResult)}
                                             type={"Финальной аттестации"}
                                             name={student.name}
                                             studentId={student.id}

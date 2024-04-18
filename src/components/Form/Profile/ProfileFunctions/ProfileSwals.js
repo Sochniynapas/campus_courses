@@ -1,28 +1,29 @@
 
 import swal from 'sweetalert'
-export default function SwalChangeStudentStatusContent(statusCode, type, dispatch, navigate) {
-
+export function SwalsForEditProfile(statusCode, dispatch, navigate) {
     switch (statusCode) {
         case 200:
+            navigate('/')
             swal({
                 title: "Успешно!",
-                text: `Вы успешно ${type} заявку`,
+                text: "Вы успешно изменили профиль!",
                 icon: "success",
-                button: "Продолжить"
-            })
+                button: "Продолжить",
+            });
+
             break
         case 400:
             swal({
                 title: "Ошибка",
-                text: "На данном курсе больше нет свободных мест",
+                text: "Проверьте введённые поля",
                 icon: "error",
                 button: "Продолжить",
             });
+
             break
         case 401:
-
             localStorage.clear()
-            navigate("/")
+            navigate('/')
             swal({
                 title: "Ошибка",
                 text: "Вам следует авторизоваться",
@@ -30,18 +31,8 @@ export default function SwalChangeStudentStatusContent(statusCode, type, dispatc
                 button: "Продолжить",
             });
             break
-        case 404:
 
-            navigate("/")
-            swal({
-                title: "Ошибка",
-                text: "Не удалось ничего найти по данному запросу",
-                icon: "error",
-                button: "Продолжить",
-            });
-            break
         default:
-
             swal({
                 title: "Ошибка",
                 text: "Произошла непредвиденная ошибка",
@@ -49,5 +40,31 @@ export default function SwalChangeStudentStatusContent(statusCode, type, dispatc
                 button: "Продолжить",
             });
             break
+
+    }
+}
+
+export function SwalsForLoadingProfile(statusCode, dispatch, navigate){
+    switch (statusCode) {
+        case 401:
+            localStorage.clear()
+            navigate('/')
+            swal({
+                title: "Ошибка",
+                text: "Вам следует авторизоваться",
+                icon: "error",
+                button: "Продолжить",
+            });
+            break
+
+        default:
+            swal({
+                title: "Ошибка",
+                text: "Произошла непредвиденная ошибка",
+                icon: "error",
+                button: "Продолжить",
+            });
+            break
+
     }
 }

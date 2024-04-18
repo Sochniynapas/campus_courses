@@ -1,10 +1,11 @@
-import { useState } from "react"
-import { Button, Card, Container, Form, FormControl, FormGroup, FormLabel, Nav } from "react-bootstrap"
+import { useEffect, useState } from "react"
+import { Button, Container, Form, FormControl, FormGroup, FormLabel, Nav } from "react-bootstrap"
 import { useRegisterUserMutation } from "../../../api/userApi"
 import { useDispatch } from "react-redux";
-import { setLogin, setRoles, setToken } from "../../../store/slice/authSlice";
+import { selectToken } from "../../../store/slice/authSlice";
 import { ProfileValidation } from "../../../validation/userValidation";
 import { useNavigate } from "react-router-dom";
+import { handleFieldChange, handleRegistration } from "./RegistrationFunctions/FunctionsForRegistration";
 
 
 function Registration() {
@@ -12,7 +13,6 @@ function Registration() {
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const [busy, setBusy] = useState(false)
     const [fields, setFields] = useState({
         fullName: '',
         birthDate: '',
@@ -20,45 +20,15 @@ function Registration() {
         password: '',
         confirmPassword: ''
     });
+    const [busy, setBusy] = useState(false)
 
     const [userRegister] = useRegisterUserMutation()
 
-    const handleFieldChange = (fieldName, value) => {
-        setFields(prevFields => ({
-            ...prevFields,
-            [fieldName]: value
-        }));
-    };
-    const handleRegistration = async () => {
-        try {
-            const response = await userRegister(fields)
-            if (response.data) {
-                dispatch(setToken(response.data.token))
-                dispatch(setLogin(fields.email))
-                navigate('/')
-                swal({
-                    title: "Успешно!",
-                    text: "Вы зарегистрировались!",
-                    icon: "success",
-                    button: "Продолжить",
-                });
-            }
-            else {
-                swal({
-                    title: "Ошибка",
-                    text: "Проверьте введённые данные",
-                    icon: "error",
-                    button: "Продолжить",
-                });
-                setBusy(true)
-                throw new Error(response.error.status)
-            }
-        }
-        catch (error) {
-
-        }
-    }
-
+    ///useEffect(()=>{
+    ///    if(dispatch(selectToken()) !== null){
+    ///        navigate('/')
+    ///    }
+    ///}, [])
 
     return (
         <Container className="pt-5">
@@ -71,7 +41,7 @@ function Registration() {
                     <FormControl
                         type="text"
                         value={fields.fullName}
-                        onChange={(e) => handleFieldChange('fullName', e.target.value)}
+                        onChange={(e) => handleFieldChange('fullName', e.target.value, setFields)}
                     />
                     <ProfileValidation type={"name"} input={fields.fullName} />
                 </FormGroup>
@@ -80,7 +50,7 @@ function Registration() {
                     <FormControl
                         type="date"
                         value={fields.birthDate}
-                        onChange={(e) => handleFieldChange('birthDate', e.target.value)}
+                        onChange={(e) => handleFieldChange('birthDate', e.target.value, setFields)}
                     />
                     <ProfileValidation type={"date"} input={fields.birthDate} />
                 </FormGroup>
@@ -89,12 +59,12 @@ function Registration() {
                     <FormControl
                         type="email"
                         value={fields.email}
-                        onChange={(e) => handleFieldChange('email', e.target.value)}
-                    />
+                        onChange={(e) => handleFieldChange('email', e.target.value, setFields)}
+                    /> 
                     {busy ? (
-                        <FormLabel className="text-danger ">Почта уже занята</FormLabel>
-                    ) : (
-                        <ProfileValidation type={"email"} input={fields.email} />
+                        <FormLabel className="text-danger">Почта уже занята</FormLabel>
+                    ):(
+                        <ProfileValidation type={"email"} input={fields.email} />  
                     )}
                 </FormGroup>
                 <FormGroup className="pb-2">
@@ -102,7 +72,7 @@ function Registration() {
                     <FormControl
                         type="password"
                         value={fields.password}
-                        onChange={(e) => handleFieldChange('password', e.target.value)}
+                        onChange={(e) => handleFieldChange('password', e.target.value, setFields)}
                     />
                     <ProfileValidation type={"password"} input={fields.password} />
                 </FormGroup>
@@ -111,7 +81,7 @@ function Registration() {
                     <FormControl
                         type="password"
                         value={fields.confirmPassword}
-                        onChange={(e) => handleFieldChange('confirmPassword', e.target.value)}
+                        onChange={(e) => handleFieldChange('confirmPassword', e.target.value, setFields)}
                     />
                     {fields.confirmPassword !== fields.password ? (
                         <FormLabel className="text-danger">
@@ -122,7 +92,7 @@ function Registration() {
                     )}
                 </FormGroup>
 
-                <Button className="pb-2" onClick={handleRegistration}>
+                <Button className="pb-2" onClick={()=>handleRegistration(userRegister, dispatch, navigate, fields, setBusy)}>
                     Зарегистрироваться
                 </Button>
             </Form>

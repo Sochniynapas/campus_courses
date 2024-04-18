@@ -1,47 +1,34 @@
-
 import swal from 'sweetalert'
-export default function SwalChangeStudentStatusContent(statusCode, type, dispatch, navigate) {
-
+export function SwalsForRegistration(statusCode, navigate, setBusy) {
     switch (statusCode) {
         case 200:
+            navigate('/')
             swal({
                 title: "Успешно!",
-                text: `Вы успешно ${type} заявку`,
+                text: "Вы успешно зарегистрировались!",
                 icon: "success",
-                button: "Продолжить"
-            })
+                button: "Продолжить",
+            });
+            setBusy(false)
             break
         case 400:
             swal({
                 title: "Ошибка",
-                text: "На данном курсе больше нет свободных мест",
+                text: "Проверьте введённые поля",
                 icon: "error",
                 button: "Продолжить",
             });
             break
-        case 401:
-
-            localStorage.clear()
-            navigate("/")
+        case 409:
             swal({
                 title: "Ошибка",
-                text: "Вам следует авторизоваться",
+                text: "Почта уже занята",
                 icon: "error",
                 button: "Продолжить",
             });
-            break
-        case 404:
-
-            navigate("/")
-            swal({
-                title: "Ошибка",
-                text: "Не удалось ничего найти по данному запросу",
-                icon: "error",
-                button: "Продолжить",
-            });
+            setBusy(true)
             break
         default:
-
             swal({
                 title: "Ошибка",
                 text: "Произошла непредвиденная ошибка",

@@ -1,20 +1,33 @@
 import swal from 'sweetalert'
-export default function SwalStatusContent(statusCode, handleClose, dispatch, navigate) {
+const handleCreateNewGroup = async (createGroup, dispatch, navigate, name, token, handleClose, setIsRequired, setName) => {
+    const response = await createGroup({ token: token, name: name })
+    debugger
+    if (response.error) {
+        SwalsForCreateGroupActions(response.error.status, dispatch, navigate, setIsRequired, handleClose)
+    }
+    else {
+        setName('')
+        SwalsForCreateGroupActions(200, dispatch, navigate, setIsRequired, handleClose)
+    }
+}
+function SwalsForCreateGroupActions(statusCode, dispatch, navigate, setIsRequired, handleClose) {
 
     switch (statusCode) {
         case 200:
             handleClose()
+            setIsRequired(false)
             swal({
-                title: "Успешно!",
-                text: "Вы успешно изменили статус курса!",
+                title: "Успешно",
+                text: "Вы успешно создали группу",
                 icon: "success",
-                button: "Продолжить"
+                button: "Продолжить",
             })
             break
         case 400:
+            setIsRequired(true)
             swal({
                 title: "Ошибка",
-                text: "Проверьте, корректен ли ваш выбор",
+                text: "Проверьте введенные поля",
                 icon: "error",
                 button: "Продолжить",
             });
@@ -30,12 +43,12 @@ export default function SwalStatusContent(statusCode, handleClose, dispatch, nav
                 button: "Продолжить",
             });
             break
-        case 404:
+        case 403:
             handleClose()
-            navigate("/")
+            navigate('/')
             swal({
                 title: "Ошибка",
-                text: "Не удалось ничего найти по данному запросу",
+                text: "У вас нет прав для создания группы",
                 icon: "error",
                 button: "Продолжить",
             });
@@ -52,19 +65,4 @@ export default function SwalStatusContent(statusCode, handleClose, dispatch, nav
     }
 }
 
-const handleEditStatus = async(editStatus, token, status, id, setRequired, setStatus, handleClose, dispatch, navigate)=>{
-    const response = await editStatus({token: token, body: {status}, id: id})
-    if(response.error){
-        if(response.error.status === 400){
-            setRequired(true)
-        }
-        SwalStatusContent(response.error.status, handleClose, dispatch, navigate)
-    }
-    else{
-        setRequired(false)
-        setStatus("")
-        SwalStatusContent(200, handleClose, dispatch, navigate)
-    }
-}
-
-export {handleEditStatus}
+export default handleCreateNewGroup

@@ -1,16 +1,16 @@
 import { Button, Container, Form, FormControl, FormGroup, FormLabel, Nav, Navbar, Row } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
 import { useEditUserProfileMutation, useGetUserProfileQuery } from "../../../api/userApi"
-import { clearToken, selectRoles, selectToken, setRoles } from "../../../store/slice/authSlice"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import useDateFormatter from '../../../functions/formattedDate'
 import formatedDate from "../../../functions/formattedDate"
 import { ProfileValidation } from "../../../validation/userValidation"
+import { handleEdit, handleFieldChange } from "./ProfileFunctions/ProfileFunctions"
+import { SwalsForLoadingProfile } from "./ProfileFunctions/ProfileSwals"
 
 
 function Profile() {
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const dispatch = useDispatch()
     const { data: userProfile, error: userError, isLoading } = useGetUserProfileQuery(token)
     const [editUserProfile] = useEditUserProfileMutation()
@@ -21,32 +21,7 @@ function Profile() {
         bDate: '',
     })
 
-    const handleEdit = async () => {
-        const body = { fullName: profileFields.name, birthDate: profileFields.bDate }
-        const response = await editUserProfile({ body: body, token: token })
-        if (response.data) {
-            swal({
-                title: "Успешно!",
-                text: "Вы изменили профиль!",
-                icon: "success",
-                button: "Продолжить",
-            });
-            dispatch(clearToken())
-            navigate('/')
-        }
-        else {
-            if (response.error.status === 401) {
-                dispatch(clearToken())
-                navigate('/')
-            }
-        }
-    }
-    const handleFieldChange = (fieldName, value) => {
-        setProfileFields(prevFields => ({
-            ...prevFields,
-            [fieldName]: value
-        }));
-    };
+    
     useEffect(() => {
 
         if (userProfile) {
@@ -61,23 +36,8 @@ function Profile() {
             )
         }
         else {
-            if (userError && userError.status === 401) {
-                swal({
-                    title: "Ошибка",
-                    text: "Вам следует авторизоваться",
-                    icon: "error",
-                    button: "Продолжить",
-                });
-                dispatch(clearToken())
-                navigate('/')
-            }
-            else {
-                swal({
-                    title: "Ошибка",
-                    text: "Проверьте введенные данные",
-                    icon: "error",
-                    button: "Продолжить",
-                });
+            if(userError){
+                SwalsForLoadingProfile(userError.status, dispatch, navigate)
             }
         }
 
@@ -97,7 +57,7 @@ function Profile() {
                             <FormControl
                                 type="text"
                                 value={profileFields.name}
-                                onChange={(e) => (handleFieldChange("name", e.target.value))}
+                                onChange={(e) => (handleFieldChange("name", e.target.value, setProfileFields))}
                                 className="w-75 col-10"
                             />
                         </FormGroup>
@@ -113,7 +73,7 @@ function Profile() {
                             <FormControl
                                 type="date"
                                 value={profileFields.bDate}
-                                onChange={(e) => (handleFieldChange("bDate", e.target.value))}
+                                onChange={(e) => (handleFieldChange("bDate", e.target.value, setProfileFields))}
                                 className="w-75 col-10"
                             />
                         </FormGroup>
@@ -122,7 +82,7 @@ function Profile() {
                         </FormLabel>
 
                         <FormGroup className="d-flex justify-content-end ">
-                            <Button className="mt-3" onClick={handleEdit}>
+                            <Button className="mt-3" onClick={() => handleEdit(profileFields, editUserProfile, dispatch, navigate, token)}>
                                 Изменить
                             </Button>
                         </FormGroup>

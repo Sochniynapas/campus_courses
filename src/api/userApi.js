@@ -6,6 +6,7 @@ const BASE_URL = 'https://camp-courses.api.kreosoft.space/'
 export const userApi = createApi({
 
     reducerPath: 'userApi',
+    tagTypes: ['Profile'],
     baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
     endpoints: (build) => ({
         registerUser: build.mutation({
@@ -39,7 +40,8 @@ export const userApi = createApi({
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-            })
+            }),
+            invalidatesTags: [{ type: 'Profile', id: 'LIST' }]
         }),
         getUserProfile: build.query({
             query: (token)=>({
@@ -47,23 +49,8 @@ export const userApi = createApi({
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-            })
-        }),
-        getUserCourses: build.query({
-            query: ({token}) => ({
-                url: 'courses/my',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-        }),
-        getUserTeachingCourses: build.query({
-            query: ({token}) => ({
-                url: 'courses/teaching',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+            }),
+            providesTags: (result, id) => [{ type: 'Profile', id: 'LIST' }]
         }),
         getUserRoles: build.query({
             query: (token) => ({
@@ -87,8 +74,6 @@ export const userApi = createApi({
 
 export const {
     useRegisterUserMutation,
-    useGetUserCoursesQuery,
-    useGetUserTeachingCoursesQuery,
     useAuthorizeUserMutation,
     useLogoutUserMutation,
     useGetUserProfileQuery,

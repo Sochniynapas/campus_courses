@@ -53,7 +53,7 @@ export const groupApi = createApi({
                 }
             }),
             invalidatesTags: [{ type: 'Groups', id: 'LIST' }]
-        })
+        }),
     })
 })
 
@@ -61,4 +61,5 @@ export const {
     useGetGroupsQuery,
     usePutGroupNameMutation,
     useDeleteGroupMutation,
-    useCreateGroupMutation } = groupApi
+    useCreateGroupMutation,
+} = groupApi

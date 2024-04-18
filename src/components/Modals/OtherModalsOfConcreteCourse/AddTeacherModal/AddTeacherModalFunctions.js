@@ -1,6 +1,4 @@
-
-import { clearToken } from "../../../../store/slice/authSlice";
-
+import swal from 'sweetalert'
 export default function SwalAddTeacherContent(statusCode, handleClose, dispatch, navigate) {
 
     switch (statusCode) {
@@ -23,7 +21,7 @@ export default function SwalAddTeacherContent(statusCode, handleClose, dispatch,
             break
         case 401:
             handleClose()
-            dispatch(clearToken())
+            localStorage.clear()
             navigate("/")
             swal({
                 title: "Ошибка",
@@ -52,3 +50,26 @@ export default function SwalAddTeacherContent(statusCode, handleClose, dispatch,
             break
     }
 }
+
+const handleAddTeacher = async (addTeacher, token, teacher, id, setIsSelect, handleClose, dispatch, navigate, setTeacher) => {
+    const response = await addTeacher({ token: token, body: teacher, id: id })
+    if (response.error) {
+        if (response.error.status === 400) {
+            setIsSelect(true)
+        }
+        SwalAddTeacherContent(response.error.status, handleClose, dispatch, navigate)
+    }
+    else {
+        setIsSelect(false)
+        handleClose()
+        setTeacher({})
+        SwalAddTeacherContent(200, handleClose, dispatch, navigate)
+    }
+}
+
+const handleClearOption = (setTeacher, handleClose) => {
+    setTeacher({})
+    handleClose()
+}
+
+export {handleAddTeacher, handleClearOption}

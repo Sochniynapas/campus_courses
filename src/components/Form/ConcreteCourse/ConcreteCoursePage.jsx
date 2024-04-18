@@ -1,10 +1,10 @@
 
 import { Button, Card, Container, Form, FormGroup, FormLabel, Tab, TabContent, Tabs } from "react-bootstrap"
 import { useNavigate, useParams } from "react-router-dom"
-import { useGetCoursePageQuery, useSignUpForACourseMutation } from "../../../api/coursesApi"
+import { useDeleteCourseMutation, useGetCoursePageQuery, useSignUpForACourseMutation } from "../../../api/coursesApi"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { selectLogin, selectRoles, selectToken } from "../../../store/slice/authSlice"
+import { selectLogin, selectRoles } from "../../../store/slice/authSlice"
 import Status from "../../Status/StatusComponent"
 import Semester from "../../Semester/SemesterComponent"
 import CustomNotification from "./AtributesOfCourse.jsx/Notification"
@@ -14,19 +14,21 @@ import CreateUpdateCourse from "../../Modals/СreateCourseModal/CreateCourseModa
 import AddTeacher from "../../Modals/OtherModalsOfConcreteCourse/AddTeacherModal/AddTeacherModal"
 import CreateNotification from "../../Modals/OtherModalsOfConcreteCourse/CreateNotificationModal/CreateNotificationModal"
 import ChangeStatus from "../../Modals/OtherModalsOfConcreteCourse/ChangeStatusModal/ChangeStatusModal"
-import SwalSignUpToACourseContent from "./AtributesOfCourse.jsx/SwalsOfACourse/SwalForSignUpToACourse"
 import SwalGetCourseDataContent from "./AtributesOfCourse.jsx/SwalsOfACourse/SwalForGetCourseData"
+import { handleCloseSimple, handleDeleteCourse, handleShowSimple, handleSignUp, setCourseFields } from "./AtributesOfCourse.jsx/ConcreteCourseFunctions/CourseFunctions"
+import DeleteModal from "../../Modals/OtherModalsOfConcreteCourse/ModalForConfirmDelete"
 
 function ConcreteCourse() {
 
     const { id } = useParams()
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const role = useSelector(selectRoles)
     const emailOfUser = useSelector(selectLogin)
 
     const [isTeacherOfCourse, setIsTeacherOfCourse] = useState({})
     const [signUpToACourse] = useSignUpForACourseMutation()
-    const { data: courseData, error: getCourseError } = useGetCoursePageQuery({ token, id })
+    const [deleteCourse] = useDeleteCourseMutation()
+    const { data: courseData, error: getCourseError, isLoading } = useGetCoursePageQuery({ token, id })
 
     const [fields, setFields] = useState({
         name: '',
@@ -37,6 +39,15 @@ function ConcreteCourse() {
         annotations: '',
         mainTeacherId: ''
     });
+    const [showSimpleModal, setShowSimpleModal] = useState({
+        addTeacher: false,
+        changeMiddleResult: false,
+        changeFinalResult: false,
+        changeStatus: false,
+        createNotification: false,
+        deleteCourseModal: false
+    })
+
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
@@ -44,37 +55,7 @@ function ConcreteCourse() {
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true);
 
-    const [showSimpleModal, setShowSimpleModal] = useState({
-        addTeacher: false,
-        changeMiddleResult: false,
-        changeFinalResult: false,
-        changeStatus: false,
-        createNotification: false
-    })
-    const handleCloseSimple = (type) => {
-        setShowSimpleModal(prevValues => ({
-            ...prevValues,
-            [type]: false
-        }))
-    }
-    const handleShowSimple = (type) => {
-        setShowSimpleModal(prevValues => ({
-            ...prevValues,
-            [type]: true
-        }))
-    }
 
-    const handleSignUp = async () => {
-        const response = await signUpToACourse({ token: token, id: id })
-        if (response.error) {
-
-            SwalSignUpToACourseContent(response.error.status, dispatch, navigate)
-        }
-        else {
-
-            SwalSignUpToACourseContent(200, dispatch, navigate)
-        }
-    }
 
     useEffect(() => {
         if (getCourseError) {
@@ -82,21 +63,8 @@ function ConcreteCourse() {
         }
         else {
             if (courseData) {
-                const userIsTeacher = courseData.teachers.find(obj => obj.email === emailOfUser)
-                if (userIsTeacher !== undefined || role.isAdmin) {
-                    setIsTeacherOfCourse(userIsTeacher)
-                    setFields({
-                        name: courseData.name,
-                        startYear: courseData.startYear,
-                        maximumStudentsCount: courseData.maximumStudentsCount,
-                        semester: courseData.semester,
-                        requirements: courseData.requirements,
-                        annotations: courseData.annotations,
-                    })
-                }
-                else {
-                    setIsTeacherOfCourse(undefined)
-                }
+                console.log(courseData)
+                setCourseFields(setIsTeacherOfCourse, setFields, courseData, emailOfUser, role)
             }
 
         }
@@ -110,10 +78,23 @@ function ConcreteCourse() {
                     <FormGroup className="d-flex justify-content-between  flex-lg-row flex-column pb-1">
                         <FormLabel className="h3">Основные данный курса</FormLabel>
                         {(isTeacherOfCourse !== undefined || role.isAdmin) &&
-                            <Button variant="warning" className="text-uppercase text-black border-0 " onClick={handleShow}>
-                                Редактировать
-                            </Button>
+                            <div>
+                                <Button variant="warning" className="text-uppercase text-black border-0 me-2" onClick={handleShow}>
+                                    Редактировать
+                                </Button>
+                                <Button variant="danger" className="text-uppercase text-white border-0" onClick={() => handleShowSimple("deleteCourseModal", setShowSimpleModal)}>
+                                    Удалить
+                                </Button>
+                            </div>
                         }
+                        <DeleteModal
+                            show={showSimpleModal.deleteCourseModal}
+                            handleClose={() => handleCloseSimple("deleteCourseModal", setShowSimpleModal)}
+                            deleteCourse={deleteCourse}
+                            navigate={navigate}
+                            token={token}
+                            id={id}
+                        />
                         <CreateUpdateCourse show={show} handleClose={handleClose} fields={fields} setFields={setFields} isAdmin={role.isAdmin} />
                     </FormGroup>
                     <Card>
@@ -125,16 +106,18 @@ function ConcreteCourse() {
                             {(isTeacherOfCourse !== undefined || role.isAdmin) ?
                                 (
                                     <>
-                                        <Button variant="warning" onClick={() => handleShowSimple("changeStatus")} className="text-uppercase text-black border-0 mt-2 mb-2">
+                                        <Button variant="warning" onClick={() => handleShowSimple("changeStatus", setShowSimpleModal)} className="text-uppercase text-black border-0 mt-2 mb-2">
                                             Изменить
                                         </Button>
                                         <ChangeStatus
                                             show={showSimpleModal.changeStatus}
-                                            handleClose={() => handleCloseSimple("changeStatus")}
+                                            handleClose={() => handleCloseSimple("changeStatus", setShowSimpleModal)}
                                         />
                                     </>
                                 ) : (!courseData.students.find(student => student.email === emailOfUser) && courseData.status === "OpenForAssigning") ? (
-                                    <Button variant="success" className="text-uppercase text-white border-0 mt-2 mb-2" onClick={handleSignUp}>записаться на курс</Button>
+                                    <Button variant="success" className="text-uppercase text-white border-0 mt-2 mb-2" onClick={() => handleSignUp(signUpToACourse, dispatch, navigate, token, id)}>
+                                        записаться на курс
+                                    </Button>
                                 ) : null
 
                             }
@@ -182,12 +165,12 @@ function ConcreteCourse() {
                                 <TabContent key={id} className="d-flex flex-column">
                                     {(role.isAdmin || isTeacherOfCourse) &&
                                         <div className="pb-4">
-                                            <Button onClick={() => handleShowSimple("createNotification")}>
+                                            <Button onClick={() => handleShowSimple("createNotification", setShowSimpleModal)}>
                                                 Создать уведомление
                                             </Button>
                                             <CreateNotification
                                                 show={showSimpleModal.createNotification}
-                                                handleClose={() => handleCloseSimple("createNotification")}
+                                                handleClose={() => handleCloseSimple("createNotification", setShowSimpleModal)}
                                             />
                                         </div>
                                     }
@@ -214,10 +197,10 @@ function ConcreteCourse() {
                                 <TabContent>
                                     {(role.isAdmin || courseData.teachers.find(teacher => teacher.email === emailOfUser)) &&
                                         <>
-                                            <Button className="mb-4" onClick={() => handleShowSimple("addTeacher")}>Добавить преподавателя</Button>
+                                            <Button className="mb-4" onClick={() => handleShowSimple("addTeacher", setShowSimpleModal)}>Добавить преподавателя</Button>
                                             <AddTeacher
                                                 show={showSimpleModal.addTeacher}
-                                                handleClose={() => handleCloseSimple("addTeacher")}
+                                                handleClose={() => handleCloseSimple("addTeacher", setShowSimpleModal)}
                                             />
                                         </>
                                     }
@@ -243,9 +226,6 @@ function ConcreteCourse() {
                                             isTeacher={isTeacherOfCourse !== undefined}
                                             isAdmin={role.isAdmin}
                                             currentUserEmail={emailOfUser}
-                                            showSimpleModal={showSimpleModal}
-                                            handleCloseSimple={handleCloseSimple}
-                                            handleShowSimple={handleShowSimple}
                                         />
                                     ))}
                                 </TabContent>

@@ -23,6 +23,36 @@ export const coursesApi = createApi({
                     [{ type: 'Courses', id: 'LIST' }]
                 ]
         }),
+        getUserCourses: build.query({
+            query: ({token}) => ({
+                url: 'courses/my',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+            providesTags: (result) => result
+                ? [
+                    ...result.map(({ id }) => ({ type: 'Courses' }, id)),
+                    { type: 'Courses', id: 'LIST' }
+                ] : [
+                    [{ type: 'Courses', id: 'LIST' }]
+                ]
+        }),
+        getUserTeachingCourses: build.query({
+            query: ({token}) => ({
+                url: 'courses/teaching',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+            providesTags: (result) => result
+                ? [
+                    ...result.map(({ id }) => ({ type: 'Courses' }, id)),
+                    { type: 'Courses', id: 'LIST' }
+                ] : [
+                    [{ type: 'Courses', id: 'LIST' }]
+                ]
+        }),
         getConcreteCourse: build.query({
             query: ({ token, id }) => ({
                 url: `courses/${id}`,
@@ -138,6 +168,16 @@ export const coursesApi = createApi({
                 }
             }),
             invalidatesTags: [{ type: 'ConcreteCourse', id: 'LIST' }]
+        }),
+        deleteCourse: build.mutation({
+            query: ({ token, id }) => ({
+                url: `courses/${id}`,
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }),
+            invalidatesTags: [{ type: 'Courses', id: 'LIST' }]
         })
     })
 
@@ -155,5 +195,8 @@ export const {
     useEditStudentMarkMutation,
     useCreateNotificationMutation,
     useSignUpForACourseMutation,
-    useChangeUserStatusMutation
+    useChangeUserStatusMutation,
+    useDeleteCourseMutation,
+    useGetUserCoursesQuery,
+    useGetUserTeachingCoursesQuery
 } = coursesApi

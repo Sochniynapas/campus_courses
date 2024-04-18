@@ -1,19 +1,18 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Button, FormCheck, FormLabel, Modal } from "react-bootstrap"
 import { useEditStudentMarkMutation } from "../../../../api/coursesApi"
 import { useNavigate, useParams } from "react-router-dom"
-import SwalMarkContent from "./ChangeResultModalFucntions"
+import { hanadleEditMark, handleChooseMark, handleDefaultChecked } from "./ChangeResultModalFucntions"
 import { useDispatch, useSelector } from "react-redux"
-import { selectToken } from "../../../../store/slice/authSlice"
 
 
 const ChangeResult = ({ show, handleClose, type, name, studentId }) => {
-    
+
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const token = useSelector(selectToken)
-    const {id} = useParams()
-    
+    const token = localStorage.getItem("token")
+    const { id } = useParams()
+
     const [editMark] = useEditStudentMarkMutation()
     const [isRequired, setIsRequired] = useState(false)
     const [markData, setMarkData] = useState({
@@ -21,33 +20,7 @@ const ChangeResult = ({ show, handleClose, type, name, studentId }) => {
         mark: ""
     })
 
-    const hanadleEditMark = async() =>{
-        const response = await editMark({token: token, body: markData, courseId: id, studentId: studentId, })
-        if(response.error){
-            if(response.error.status === 400){
-                setIsRequired(true)
-            }
-            SwalMarkContent(response.error.status, handleClose, dispatch, navigate)
-        }
-        else{
-            setIsRequired(false)
-            setMarkData({})
-            SwalMarkContent(200, handleClose, dispatch, navigate)
-        }
-    }
-    const handleChooseMark=(value)=>{
-        if(type === "Промежуточной аттестации"){
-            setMarkData({markType: "Midterm", mark: value})
-        }
-        else{
-            setMarkData({markType: "Final", mark: value})
-        }
-    }
-    const handleDefaultChecked = (value)=>{
-        if(value === markData.mark){
-            return true
-        }
-    }
+
     return (
         <>
             <Modal
@@ -70,9 +43,9 @@ const ChangeResult = ({ show, handleClose, type, name, studentId }) => {
                             name="group1"
                             type={'radio'}
                             id={`inline-${'radio'}-1`}
-                            defaultChecked={handleDefaultChecked("Passed")}
+                            defaultChecked={handleDefaultChecked("Passed", markData)}
                             onChange={() => {
-                                handleChooseMark("Passed")
+                                handleChooseMark("Passed", type, setMarkData)
                             }}
 
                         />
@@ -82,9 +55,9 @@ const ChangeResult = ({ show, handleClose, type, name, studentId }) => {
                             name="group1"
                             type={'radio'}
                             id={`inline-${'radio'}-2`}
-                            defaultChecked={handleDefaultChecked("Failed")}
+                            defaultChecked={handleDefaultChecked("Failed", markData)}
                             onChange={() => {
-                                handleChooseMark("Failed")
+                                handleChooseMark("Failed", type, setMarkData)
                             }}
                         />
                     </div>
@@ -103,7 +76,18 @@ const ChangeResult = ({ show, handleClose, type, name, studentId }) => {
                     }} variant="secondary">
                         Отмена
                     </Button>
-                    <Button variant="primary" onClick={hanadleEditMark}>Сохранить</Button>
+                    <Button variant="primary" onClick={() => hanadleEditMark(
+                        token,
+                        markData,
+                        editMark,
+                        id,
+                        studentId,
+                        setIsRequired,
+                        handleClose,
+                        dispatch,
+                        navigate,
+                        setMarkData
+                    )}>Сохранить</Button>
                 </Modal.Footer>
             </Modal>
         </>

@@ -1,6 +1,4 @@
-
-import { clearToken } from "../../../../store/slice/authSlice";
-
+import swal from 'sweetalert'
 export default function SwalCreateNotificationContent(statusCode, handleClose, dispatch, navigate) {
 
     switch (statusCode) {
@@ -23,7 +21,7 @@ export default function SwalCreateNotificationContent(statusCode, handleClose, d
             break
         case 401:
             handleClose()
-            dispatch(clearToken())
+            localStorage.clear()
             navigate("/")
             swal({
                 title: "Ошибка",
@@ -53,3 +51,36 @@ export default function SwalCreateNotificationContent(statusCode, handleClose, d
             break
     }
 }
+
+const handleCreateNotification = async(createNotification, token, notificationData, id, setIsRequired, handleClose, dispatch, navigate, setNotificationData) => {
+    const response = await createNotification({token: token, body: {text: notificationData.text, isImportant: notificationData.isImportant}, id: id})
+    if(response.error){
+        if(response.error.status === 400){
+            setIsRequired(true)
+        }
+        SwalCreateNotificationContent(response.error.status, handleClose, dispatch, navigate)
+    }
+    else{
+        SwalCreateNotificationContent(200, handleClose, dispatch, navigate)
+        setNotificationData({})
+        setIsRequired(false)
+    }
+}
+
+const handleChangeData = (type, value, setNotificationData) =>{
+    setNotificationData((prevFields)=>({
+        ...prevFields,
+        [type]: value
+    }))
+}
+
+const handleChangeImportant = (notificationData) =>{
+    if(notificationData.isImportant){
+        return false
+    }
+    else{
+        return true
+    }
+}
+
+export {handleCreateNotification, handleChangeData, handleChangeImportant}
