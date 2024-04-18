@@ -1,6 +1,5 @@
-import { clearToken } from "../../../store/slice/authSlice";
 
-
+import swal from 'sweetalert'
 export function SwalContent(statusCode, text, handleClose, dispatch, navigate) {
     switch (statusCode) {
         case 200:
@@ -22,7 +21,7 @@ export function SwalContent(statusCode, text, handleClose, dispatch, navigate) {
             break
         case 401:
             handleClose()
-            dispatch(clearToken())
+            localStorage.clear()
             navigate("/")
             swal({
                 title: "Ошибка",

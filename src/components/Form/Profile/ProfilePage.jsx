@@ -1,7 +1,6 @@
 import { Button, Container, Form, FormControl, FormGroup, FormLabel, Nav, Navbar, Row } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
 import { useEditUserProfileMutation, useGetUserProfileQuery } from "../../../api/userApi"
-import { selectToken } from "../../../store/slice/authSlice"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import formatedDate from "../../../functions/formattedDate"
@@ -11,7 +10,7 @@ import { SwalsForLoadingProfile } from "./ProfileFunctions/ProfileSwals"
 
 
 function Profile() {
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const dispatch = useDispatch()
     const { data: userProfile, error: userError, isLoading } = useGetUserProfileQuery(token)
     const [editUserProfile] = useEditUserProfileMutation()

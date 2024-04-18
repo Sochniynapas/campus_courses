@@ -1,27 +1,27 @@
-import { Container, Nav, Navbar, NavbarBrand, NavbarText } from 'react-bootstrap'
+import { Container, Nav, Navbar, NavbarBrand } from 'react-bootstrap'
 import Header from './components/Form/Header/HeaderForm.jsx'
 import { Link, useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux';
-import { clearToken, selectLogin, selectRoles, selectToken, setRoles } from './store/slice/authSlice.js';
-import { useGetUserRolesQuery, useLogoutUserMutation } from './api/userApi.js';
-import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { selectLogin } from './store/slice/authSlice.js';
+import { useLogoutUserMutation } from './api/userApi.js';
+import swal from 'sweetalert'
 
 
 function MainPage(prop) {
 
-  const token = useSelector(selectToken)
+  const token = localStorage.getItem("token")
   const login = useSelector(selectLogin)
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+
 
   const [userLogout] = useLogoutUserMutation()
-  const { data: userRoles } = useGetUserRolesQuery(token)
+  
 
   const handleLogout = async () => {
 
     const response = await userLogout(token)
     if (response.data) {
-      dispatch(clearToken())
+      localStorage.clear()
       navigate('/')
       swal({
         title: "Успешно!",
@@ -32,20 +32,15 @@ function MainPage(prop) {
     }
     else {
       if (response.error.status === 401) {
-        dispatch(clearToken())
+        localStorage.clear()
         navigate('/')
       }
-
     }
 
 
   }
 
-  useEffect(() => {
-    if (token && userRoles) {
-      dispatch(setRoles(userRoles))
-    }
-  }, [token, userRoles]);
+  
 
   return (
     <div>

@@ -2,7 +2,6 @@ import { Button, FormCheck, FormControl, FormGroup, FormLabel, Modal } from "rea
 import CourseTextEditor from "../../TextEditors/CourseTextEditor"
 import Select from "react-select"
 import { useDispatch, useSelector } from "react-redux"
-import { selectToken } from "../../../store/slice/authSlice"
 import { useCreateCourseMutation, useEditCourseMutation, useEditCoursesAnnotationsAndRequirementsMutation } from "../../../api/coursesApi"
 import { useNavigate, useParams } from "react-router-dom"
 import { SwalContent, handleAutoPickSemester, handleCUCourse, handleFieldChange } from "./CreateUpdateModalFunctions"
@@ -11,7 +10,7 @@ import { useGetTransformedUsers } from "../../../hooks/useGetTransformedUsers"
 
 function CreateUpdateCourse({ show, handleClose, fields, setFields, isAdmin }) {
 
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const transformedUsers = useGetTransformedUsers()
 
     const { id } = useParams()

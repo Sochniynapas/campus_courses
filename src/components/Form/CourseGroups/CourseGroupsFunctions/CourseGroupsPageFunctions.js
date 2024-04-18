@@ -1,3 +1,4 @@
+import swal from 'sweetalert'
 const handleCreateNewGroup = async (createGroup, dispatch, navigate, name, token, handleClose, setIsRequired, setName) => {
     const response = await createGroup({ token: token, name: name })
     debugger
@@ -33,7 +34,7 @@ function SwalsForCreateGroupActions(statusCode, dispatch, navigate, setIsRequire
             break
         case 401:
             handleClose()
-            dispatch(clearToken())
+            localStorage.clear()
             navigate("/")
             swal({
                 title: "Ошибка",

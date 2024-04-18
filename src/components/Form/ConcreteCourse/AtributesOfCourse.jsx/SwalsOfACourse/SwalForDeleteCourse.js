@@ -1,34 +1,39 @@
 import swal from 'sweetalert'
-export function SwalsForRegistration(statusCode, navigate, setBusy) {
+export default function SwalDeleteCourse(statusCode, navigate) {
+
     switch (statusCode) {
-        case 200:
-            navigate('/')
-            swal({
-                title: "Успешно!",
-                text: "Вы успешно зарегистрировались!",
-                icon: "success",
-                button: "Продолжить",
-            });
-            setBusy(false)
-            break
-        case 400:
+        case 401:
+            localStorage.clear()
+            navigate("/")
             swal({
                 title: "Ошибка",
-                text: "Проверьте введённые поля",
+                text: "Вам следует авторизоваться",
                 icon: "error",
                 button: "Продолжить",
             });
             break
-        case 409:
+        case 403:
+
+            navigate("/")
             swal({
                 title: "Ошибка",
-                text: "Почта уже занята",
+                text: "У вас нет прав для удаления курса",
                 icon: "error",
                 button: "Продолжить",
             });
-            setBusy(true)
+            break
+        case 404:
+
+            navigate("/")
+            swal({
+                title: "Ошибка",
+                text: "Данного курса не существует",
+                icon: "error",
+                button: "Продолжить",
+            });
             break
         default:
+
             swal({
                 title: "Ошибка",
                 text: "Произошла непредвиденная ошибка",

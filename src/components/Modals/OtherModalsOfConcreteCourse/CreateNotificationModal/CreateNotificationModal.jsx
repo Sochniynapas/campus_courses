@@ -3,7 +3,6 @@ import { Button, FormCheck, FormLabel, Modal } from "react-bootstrap"
 import { useCreateNotificationMutation } from "../../../../api/coursesApi"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-import { selectToken } from "../../../../store/slice/authSlice"
 import { handleChangeData, handleChangeImportant, handleCreateNotification } from "./CreateNotificationModalFunctions"
 
 
@@ -17,7 +16,7 @@ const CreateNotification = ({ show, handleClose }) => {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const { id } = useParams()
 
 

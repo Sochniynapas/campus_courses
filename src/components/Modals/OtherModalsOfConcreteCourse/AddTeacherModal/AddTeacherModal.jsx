@@ -5,7 +5,6 @@ import { useGetTransformedUsers } from "../../../../hooks/useGetTransformedUsers
 import { useAddTeacherOnCourseMutation } from "../../../../api/coursesApi"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
-import { selectToken } from "../../../../store/slice/authSlice"
 import { handleAddTeacher, handleClearOption } from "./AddTeacherModalFunctions"
 
 
@@ -21,7 +20,7 @@ const AddTeacher = ({ show, handleClose }) => {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const { id } = useParams()
 
 

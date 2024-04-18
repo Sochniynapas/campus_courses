@@ -1,10 +1,9 @@
 import { useSelector } from "react-redux"
 import { useGetAllUsersQuery } from "../api/userApi"
 import { useEffect, useState } from "react"
-import { selectToken } from "../store/slice/authSlice"
 
 export function useGetTransformedUsers(){
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const { data: users, error: usersError } = useGetAllUsersQuery(token)
     const [transformedUsers, setTransformedUsers] = useState([])
     useEffect(() => {

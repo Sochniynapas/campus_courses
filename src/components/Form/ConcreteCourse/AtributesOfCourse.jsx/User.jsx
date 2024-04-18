@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import ChangeResult from "../../../Modals/OtherModalsOfConcreteCourse/ChangeResultModal/ChangeResultModal"
 import { useChangeUserStatusMutation } from "../../../../api/coursesApi"
 import { useDispatch, useSelector } from "react-redux"
-import { selectToken } from "../../../../store/slice/authSlice"
 import { handleClick, handleClose, handleEditStudentStatus, handleShow } from "./ConcreteCourseFunctions/UserFunctions"
 
 
@@ -20,7 +19,7 @@ const User = (
     const [editStudentStatus] = useChangeUserStatusMutation()
 
     const { id } = useParams()
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const dispatch = useDispatch()
     const navigate = useNavigate()
 

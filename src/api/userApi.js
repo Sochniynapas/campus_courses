@@ -52,22 +52,6 @@ export const userApi = createApi({
             }),
             providesTags: (result, id) => [{ type: 'Profile', id: 'LIST' }]
         }),
-        getUserCourses: build.query({
-            query: ({token}) => ({
-                url: 'courses/my',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-        }),
-        getUserTeachingCourses: build.query({
-            query: ({token}) => ({
-                url: 'courses/teaching',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-        }),
         getUserRoles: build.query({
             query: (token) => ({
                 url: 'roles',
@@ -90,8 +74,6 @@ export const userApi = createApi({
 
 export const {
     useRegisterUserMutation,
-    useGetUserCoursesQuery,
-    useGetUserTeachingCoursesQuery,
     useAuthorizeUserMutation,
     useLogoutUserMutation,
     useGetUserProfileQuery,

@@ -1,5 +1,5 @@
-import { clearToken } from "../../../../store/slice/authSlice";
 
+import swal from 'sweetalert'
 const handleChangeNameOfGroup = async (editGroupName, dispatch, navigate, setIsRequired, name, token, prop, handleClose) => {
     const response = await editGroupName({ body: { name: name }, token: token, id: prop.id })
     debugger
@@ -44,7 +44,7 @@ function SwalsForGroupEdit(status, dispatch, navigate, handleClose, setIsRequire
 
         case 401:
             handleClose()
-            dispatch(clearToken())
+            localStorage.clear()
             navigate("/")
             swal({
                 title: "Ошибка",
@@ -96,7 +96,7 @@ function SwalsForGroupDelete(status, dispatch, navigate) {
             });
             break
         case 401:
-            dispatch(clearToken())
+            localStorage.clear()
             navigate("/")
             swal({
                 title: "Ошибка",

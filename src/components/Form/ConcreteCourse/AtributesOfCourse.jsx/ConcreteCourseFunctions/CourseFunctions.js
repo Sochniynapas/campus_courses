@@ -1,3 +1,4 @@
+import SwalDeleteCourse from "../SwalsOfACourse/SwalForDeleteCourse"
 import SwalSignUpToACourseContent from "../SwalsOfACourse/SwalForSignUpToACourse"
 
 export function setCourseFields(setIsTeacherOfCourse, setFields, courseData, emailOfUser, role) {
@@ -37,5 +38,15 @@ export async function handleSignUp (signUpToACourse, dispatch, navigate, token, 
     else {
 
         SwalSignUpToACourseContent(200, dispatch, navigate)
+    }
+}
+export async function handleDeleteCourse (deleteCourse, navigate, token, id, handleClose) {
+    const response = await deleteCourse({ token: token, id: id })
+    if (response.error) {
+        SwalDeleteCourse(response.error.status, navigate)
+    }
+    else{
+        handleClose
+        navigate(-1)
     }
 }

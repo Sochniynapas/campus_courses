@@ -4,14 +4,13 @@ import { useEditStudentMarkMutation } from "../../../../api/coursesApi"
 import { useNavigate, useParams } from "react-router-dom"
 import { hanadleEditMark, handleChooseMark, handleDefaultChecked } from "./ChangeResultModalFucntions"
 import { useDispatch, useSelector } from "react-redux"
-import { selectToken } from "../../../../store/slice/authSlice"
 
 
 const ChangeResult = ({ show, handleClose, type, name, studentId }) => {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const { id } = useParams()
 
     const [editMark] = useEditStudentMarkMutation()

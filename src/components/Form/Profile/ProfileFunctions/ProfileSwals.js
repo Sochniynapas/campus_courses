@@ -1,6 +1,5 @@
-import { clearToken } from "../../../../store/slice/authSlice";
 
-
+import swal from 'sweetalert'
 export function SwalsForEditProfile(statusCode, dispatch, navigate) {
     switch (statusCode) {
         case 200:
@@ -23,7 +22,7 @@ export function SwalsForEditProfile(statusCode, dispatch, navigate) {
 
             break
         case 401:
-            dispatch(clearToken())
+            localStorage.clear()
             navigate('/')
             swal({
                 title: "Ошибка",
@@ -48,7 +47,7 @@ export function SwalsForEditProfile(statusCode, dispatch, navigate) {
 export function SwalsForLoadingProfile(statusCode, dispatch, navigate){
     switch (statusCode) {
         case 401:
-            dispatch(clearToken())
+            localStorage.clear()
             navigate('/')
             swal({
                 title: "Ошибка",

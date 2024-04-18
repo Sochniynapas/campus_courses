@@ -1,9 +1,10 @@
-import { setLogin, setToken } from "../../../store/slice/authSlice"
+import { setLogin } from "../../../store/slice/authSlice"
+import swal from 'sweetalert'
 
 const handleAuthorization = async (dispatch, setFail, navigate, userAuth, authFields) => {
     const response = await userAuth(authFields)
     if (response.data) {
-        dispatch(setToken(response.data.token))
+        localStorage.setItem("token", response.data.token)
         dispatch(setLogin(authFields.email))
         SwalsForAuthorization(200, navigate, setFail)
     }

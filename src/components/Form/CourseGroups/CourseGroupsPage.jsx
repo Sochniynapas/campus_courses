@@ -2,14 +2,14 @@ import { Button, Card, Container, Form, FormControl, FormGroup, FormLabel, Modal
 import { Link, useNavigate } from "react-router-dom";
 import { useCreateGroupMutation, useGetGroupsQuery } from "../../../api/groupApi";
 import { useDispatch, useSelector } from "react-redux";
-import { clearToken, selectRoles, selectToken } from "../../../store/slice/authSlice";
+import { selectRoles } from "../../../store/slice/authSlice";
 import { useEffect, useState } from "react";
 import CardType from "./CardTypes";
 import handleCreateNewGroup from "./CourseGroupsFunctions/CourseGroupsPageFunctions";
 
 
 function CourseGroups() {
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const roles = useSelector(selectRoles)
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -39,7 +39,7 @@ function CourseGroups() {
         }
         else {
             if (isError) {
-                dispatch(clearToken())
+                localStorage.clear()
                 navigate('/')
             }
         }

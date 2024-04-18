@@ -3,8 +3,7 @@ import { useEditCoursesStatusMutation } from "../../../../api/coursesApi"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
-import { selectToken } from "../../../../store/slice/authSlice"
-import SwalStatusContent, { handleEditStatus } from "./ChangeStatusModalFunctions"
+import { handleEditStatus } from "./ChangeStatusModalFunctions"
 
 
 
@@ -14,7 +13,7 @@ const ChangeStatus = ({ show, handleClose }) => {
     const [required, setRequired] = useState(false)
 
     const { id } = useParams()
-    const token = useSelector(selectToken)
+    const token = localStorage.getItem("token")
     const dispatch = useDispatch()
     const navigate = useNavigate()
 

@@ -1,4 +1,4 @@
-import { setLogin, setToken } from "../../../../store/slice/authSlice";
+import { setLogin } from "../../../../store/slice/authSlice";
 import { SwalsForRegistration } from "./SwalsForRegistration";
 
 const handleFieldChange = (fieldName, value, setFields) => {
@@ -12,7 +12,7 @@ const handleRegistration = async (userRegister, dispatch, navigate, fields, setB
 
     const response = await userRegister(fields)
     if (response.data) {
-        dispatch(setToken(response.data.token))
+        localStorage.setItem("token", response.data.token)
         dispatch(setLogin(fields.email))
         SwalsForRegistration(200, navigate, setBusy)
     }
