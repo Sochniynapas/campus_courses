@@ -3,8 +3,9 @@ import Header from './components/Form/Header/HeaderForm.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 import { selectLogin } from './store/slice/authSlice.js';
-import { useLogoutUserMutation } from './api/userApi.js';
+import { useGetUserProfileQuery, useLogoutUserMutation } from './api/userApi.js';
 import swal from 'sweetalert'
+import { useEffect } from 'react';
 
 
 function MainPage(prop) {
@@ -15,7 +16,7 @@ function MainPage(prop) {
 
 
   const [userLogout] = useLogoutUserMutation()
-  
+  const { data: userData, error: requestError } = useGetUserProfileQuery(token)
 
   const handleLogout = async () => {
 
@@ -39,7 +40,11 @@ function MainPage(prop) {
 
 
   }
-
+  useEffect(()=>{
+    if(requestError && requestError.status === 401){
+      localStorage.clear()
+    }
+  },[userData])
   
 
   return (
