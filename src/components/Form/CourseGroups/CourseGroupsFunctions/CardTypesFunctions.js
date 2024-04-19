@@ -2,7 +2,6 @@
 import swal from 'sweetalert'
 const handleChangeNameOfGroup = async (editGroupName, dispatch, navigate, setIsRequired, name, token, prop, handleClose) => {
     const response = await editGroupName({ body: { name: name }, token: token, id: prop.id })
-    debugger
     if (response.error) {
         SwalsForGroupEdit(response.error.status, dispatch, navigate, handleClose, setIsRequired)
     }

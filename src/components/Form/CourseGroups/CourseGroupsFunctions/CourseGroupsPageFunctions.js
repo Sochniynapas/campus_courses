@@ -1,7 +1,6 @@
 import swal from 'sweetalert'
 const handleCreateNewGroup = async (createGroup, dispatch, navigate, name, token, handleClose, setIsRequired, setName) => {
     const response = await createGroup({ token: token, name: name })
-    debugger
     if (response.error) {
         SwalsForCreateGroupActions(response.error.status, dispatch, navigate, setIsRequired, handleClose)
     }
